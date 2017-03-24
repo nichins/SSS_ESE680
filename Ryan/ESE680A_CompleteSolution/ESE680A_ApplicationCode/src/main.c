@@ -28,6 +28,15 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 #include <asf.h>
+typedef struct
+{
+	uint8_t signature[4];
+	uint8_t executing_image;
+	uint8_t downloaded_image;
+	uint8_t writenew_image:1;
+}Firmware_Status_t;
+
+static Firmware_Status_t FM_Status;
 
 struct usart_module usart_instance;
 #define MAX_RX_BUFFER_LENGTH   5
@@ -39,8 +48,8 @@ struct usart_module usart_instance;
 #define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PB11D_SERCOM4_PAD3
 
 #define LED0_PIN                  PIN_PA23
-#define LED0_ACTIVE               false
-#define LED0_INACTIVE             !LED0_ACTIVE
+#define LED0_ON					  false
+#define LED0_OFF				  !LED0_ON
 
 /** UART module for debug. */
 static struct usart_module cdc_uart_module;
@@ -64,13 +73,19 @@ static void configure_console(void)
 	usart_enable(&cdc_uart_module);
 }
 
+void write_status(Firmware_Status_t* status)
+{
+	//write status bits to NVMEM
+
+}
 int main (void)
 {
 	system_init();
 	system_interrupt_enable_global();
+	delay_init();
 	struct port_config pin_conf;
 	port_get_config_defaults(&pin_conf);
-
+	
 	/* Configure LEDs as outputs, turn them off */
 	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(LED0_PIN, &pin_conf);
@@ -79,9 +94,11 @@ int main (void)
 	while(1) {
 		port_pin_toggle_output_level(LED0_PIN);
 		printf("I'M ALIVE\n");
-		//delay_s(1);
-		//delay_cycles(1000);
-		//delay_ms(100);
+		delay_s(1);
+
+		//set firmware status bit if an upgrade is requested
+		FM_Status.writenew_image =1;
+		write_status(&FM_Status);
 	}
 
 	/* Insert application code here, after the board has been initialized. */
