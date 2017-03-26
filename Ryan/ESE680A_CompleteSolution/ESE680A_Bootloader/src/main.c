@@ -37,7 +37,8 @@ typedef struct
 	uint8_t writenew_image:1;
 }Firmware_Status_t;
 
-static Firmware_Status_t FM_Status __attribute__ ((section (".status")));
+//static Firmware_Status_t FM_Status __attribute__ ((section (".status")));		// this didn't let us write to the firmware status
+static Firmware_Status_t FM_Status;
 struct usart_module usart_instance;
 
 #define MAX_RX_BUFFER_LENGTH   5
@@ -81,13 +82,14 @@ int main (void)
 	// boot pin config
 	struct port_config pin_conf;
 	port_get_config_defaults(&pin_conf);
-	pin_conf.direction  = PORT_PIN_DIR_INPUT;
+	pin_conf.direction = PORT_PIN_DIR_INPUT;
 	 port_pin_set_config(BOOT_PIN, &pin_conf);
 	printf("Init done.\n");
 	/* Insert  code here, after the board has been initialized. */
 	//handle writing to the flags
 	FM_Status.executing_image = 1;
 	FM_Status.downloaded_image = 2;
+	printf("FM status struct updated\n");
 
 	void (*app_code_entry)(void);
 	while(1)
