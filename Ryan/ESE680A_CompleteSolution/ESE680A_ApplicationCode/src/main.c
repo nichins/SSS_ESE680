@@ -95,7 +95,8 @@ int main (void)
 	configure_port_pins();
 	system_interrupt_enable_global();
 	delay_init();
-	configure_console();
+//	configure_console();
+//	printf("App started\n");
 	while (1) {
 		if (port_pin_get_input_level(B1) == false) {
 			port_pin_set_output_level(LED_0_PIN, false);

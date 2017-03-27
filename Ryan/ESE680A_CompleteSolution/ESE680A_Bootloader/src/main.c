@@ -34,7 +34,7 @@ typedef struct
 	uint8_t signature[4];
 	uint8_t executing_image;
 	uint8_t downloaded_image;
-	uint8_t writenew_image:1;
+	uint8_t writenew_image;
 }Firmware_Status_t;
 
 //static Firmware_Status_t FM_Status __attribute__ ((section (".status")));		// this didn't let us write to the firmware status
@@ -48,7 +48,8 @@ struct usart_module usart_instance;
 #define EDBG_CDC_SERCOM_PINMUX_PAD1  PINMUX_UNUSED
 #define EDBG_CDC_SERCOM_PINMUX_PAD2  PINMUX_PB10D_SERCOM4_PAD2
 #define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PB11D_SERCOM4_PAD3
-#define APP_START_ADDRESS			0x4000
+#define APP_START_ADDRESS			0x8000
+#define FW_STAT						0x7F00
 #define BOOT_PIN					PIN_PA04 //pin tied to button for stay in boot mode
 static void configure_console(void)
 {
@@ -66,12 +67,51 @@ static void configure_console(void)
 	usart_enable(&usart_instance);
 }
 
-// download firmware and write it to the spi flash
-static void download_firmware()
-{
 
-	
+static Firmware_Status_t getFWStat() {
+	Firmware_Status_t *fm_nvm = (unsigned int*)FW_STAT;			// Pointer to FW_STAT
+	Firmware_Status_t thisFW = *fm_nvm;				// Read contents of FW_STAT
+	return thisFW;
 }
+
+static void writeFWStat(Firmware_Status_t thisFW) {
+	uint8_t page_buffer[NVMCTRL_PAGE_SIZE];
+	page_buffer[0] = thisFW.signature[0];
+	page_buffer[1] = thisFW.signature[1];
+	page_buffer[2] = thisFW.signature[2];
+	page_buffer[3] = thisFW.signature[3];
+	page_buffer[4] = thisFW.executing_image;
+	page_buffer[5] = thisFW.downloaded_image;
+	page_buffer[6] = thisFW.writenew_image;
+	
+	enum status_code error_code;
+	do
+	{
+		error_code = nvm_erase_row(FW_STAT);			// Erase FW stat row
+	} while (error_code == STATUS_BUSY);
+	
+	do 
+	{ 
+		error_code = nvm_write_buffer(FW_STAT, page_buffer, NVMCTRL_PAGE_SIZE);	// Write buffer to FW_STAT page
+	} while (error_code == STATUS_BUSY);
+}
+
+static void upgradeFW(Firmware_Status_t thisFW){
+	printf("Upgrading firmware from location %d.\n", thisFW.downloaded_image);
+	// upgrade firmware
+	thisFW.executing_image = thisFW.downloaded_image;
+	thisFW.writenew_image = 0;
+	writeFWStat(thisFW);
+	printf("Upgrade complete\n");
+}
+
+static void configure_nvm() {
+	struct nvm_config config;
+	nvm_get_config_defaults(&config);
+	config.manual_page_write = false;
+	nvm_set_config(&config);
+}
+
 int main (void)
 {
 	
@@ -79,17 +119,33 @@ int main (void)
 	system_interrupt_enable_global();
 	delay_init();
 	configure_console();
+	configure_nvm();
 	// boot pin config
 	struct port_config pin_conf;
 	port_get_config_defaults(&pin_conf);
 	pin_conf.direction = PORT_PIN_DIR_INPUT;
 	 port_pin_set_config(BOOT_PIN, &pin_conf);
 	printf("Init done.\n");
-	/* Insert  code here, after the board has been initialized. */
-	//handle writing to the flags
-	FM_Status.executing_image = 1;
-	FM_Status.downloaded_image = 2;
-	printf("FM status struct updated\n");
+
+	
+	
+	
+	Firmware_Status_t thisFW = getFWStat();
+	if (thisFW.signature[0] == NULL) {
+		printf("Invalid FW stat, writing default\n");
+		thisFW.signature[0] = 1;
+		thisFW.signature[1] = 2;
+		thisFW.signature[2] = 3;
+		thisFW.signature[3] = 4;
+		thisFW.executing_image = 1;
+		thisFW.downloaded_image = 2;
+		thisFW.writenew_image = 0;
+		writeFWStat(thisFW);
+	}
+	
+	//thisFW.writenew_image = 1;
+	//thisFW.downloaded_image = 1;
+	//writeFWStat(thisFW);
 
 	void (*app_code_entry)(void);
 	while(1)
@@ -108,17 +164,18 @@ int main (void)
 		if(!remain_in_boot)
 		{
 			// check for firmware download requested
-			if(FM_Status.writenew_image)
+			if(thisFW.writenew_image)
 			{
-				download_firmware();
+				upgradeFW(thisFW);
 			}
+			
 			// vector table rebasing
 			SCB->VTOR = ((uint32_t) APP_START_ADDRESS & SCB_VTOR_TBLOFF_Msk);
 
 			// jump to reset handler
 			app_code_entry =  (void(*)(void))(*(unsigned int*)(APP_START_ADDRESS+4));
 			// jump
-			printf("starting app\n");
+			printf("Starting app\n");
 			app_code_entry();
 		}
 
