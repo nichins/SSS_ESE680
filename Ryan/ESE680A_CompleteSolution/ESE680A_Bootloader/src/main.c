@@ -37,8 +37,6 @@ typedef struct
 	uint8_t writenew_image;
 }Firmware_Status_t;
 
-//static Firmware_Status_t FM_Status __attribute__ ((section (".status")));		// this didn't let us write to the firmware status
-static Firmware_Status_t FM_Status;
 struct usart_module usart_instance;
 
 #define MAX_RX_BUFFER_LENGTH   5
@@ -50,7 +48,7 @@ struct usart_module usart_instance;
 #define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PB11D_SERCOM4_PAD3
 #define APP_START_ADDRESS			0x8000
 #define FW_STAT						0x7F00
-#define BOOT_PIN					PIN_PA04 //pin tied to button for stay in boot mode
+#define BOOT_PIN					PIN_PB23 //pin tied to button for stay in boot mode
 static void configure_console(void)
 {
 	struct usart_config usart_conf;
@@ -98,7 +96,9 @@ static void writeFWStat(Firmware_Status_t thisFW) {
 
 static void upgradeFW(Firmware_Status_t thisFW){
 	printf("Upgrading firmware from location %d.\n", thisFW.downloaded_image);
-	// upgrade firmware
+	// write new firmware
+	
+	//...................
 	thisFW.executing_image = thisFW.downloaded_image;
 	thisFW.writenew_image = 0;
 	writeFWStat(thisFW);
@@ -148,19 +148,17 @@ int main (void)
 	//writeFWStat(thisFW);
 
 	void (*app_code_entry)(void);
-	while(1)
+	uint16_t n=0; uint8_t remain_in_boot = 0;
+	//check if button is pressed to lock in boot
+	while(n++ < 1000)
 	{
-		uint16_t n=0; uint8_t remain_in_boot = 0;
-		//check if button is pressed to lock in boot
-		while(n++ < 1000)
+		if(!port_pin_get_input_level(BOOT_PIN))
 		{
-			if(!port_pin_get_input_level(BOOT_PIN)) 
-			{
-				remain_in_boot =1;
-				break;
-			}
+			remain_in_boot = 1;
+			break;
 		}
-		
+	}
+	while(1) {
 		if(!remain_in_boot)
 		{
 			// check for firmware download requested
@@ -178,6 +176,7 @@ int main (void)
 			printf("Starting app\n");
 			app_code_entry();
 		}
-
+		printf("in boot");
+		delay_ms(500);
 	}
 }
