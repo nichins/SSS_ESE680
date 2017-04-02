@@ -1,0 +1,1342 @@
+
+Waterbug_App.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000770  00008000  00008000  00008000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .relocate     00000004  20000000  00008770  00010000  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000034  20000004  00008774  00010004  2**2
+                  ALLOC
+  3 .stack        00002000  20000038  000087a8  00010004  2**0
+                  ALLOC
+  4 .ARM.attributes 00000028  00000000  00000000  00010004  2**0
+                  CONTENTS, READONLY
+  5 .comment      00000059  00000000  00000000  0001002c  2**0
+                  CONTENTS, READONLY
+  6 .debug_info   0000afe9  00000000  00000000  00010085  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000ce2  00000000  00000000  0001b06e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000882  00000000  00000000  0001bd50  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_aranges 000001d8  00000000  00000000  0001c5d2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000178  00000000  00000000  0001c7aa  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_macro  00001dc8  00000000  00000000  0001c922  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_line   00003bea  00000000  00000000  0001e6ea  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00082aa3  00000000  00000000  000222d4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_frame  00000584  00000000  00000000  000a4d78  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00008000 <_sfixed>:
+    8000:	20002038 	.word	0x20002038
+    8004:	000083e5 	.word	0x000083e5
+    8008:	000084dd 	.word	0x000084dd
+    800c:	000084dd 	.word	0x000084dd
+	...
+    802c:	000084dd 	.word	0x000084dd
+	...
+    8038:	000084dd 	.word	0x000084dd
+    803c:	000084dd 	.word	0x000084dd
+    8040:	000084dd 	.word	0x000084dd
+    8044:	000084dd 	.word	0x000084dd
+    8048:	000084dd 	.word	0x000084dd
+    804c:	000084dd 	.word	0x000084dd
+    8050:	000084dd 	.word	0x000084dd
+    8054:	000084dd 	.word	0x000084dd
+    8058:	000084dd 	.word	0x000084dd
+    805c:	000084dd 	.word	0x000084dd
+    8060:	000084dd 	.word	0x000084dd
+    8064:	00008115 	.word	0x00008115
+    8068:	0000812d 	.word	0x0000812d
+    806c:	00008145 	.word	0x00008145
+    8070:	0000815d 	.word	0x0000815d
+    8074:	00008175 	.word	0x00008175
+    8078:	0000818d 	.word	0x0000818d
+    807c:	000084dd 	.word	0x000084dd
+    8080:	000084dd 	.word	0x000084dd
+    8084:	000084dd 	.word	0x000084dd
+    8088:	000084dd 	.word	0x000084dd
+    808c:	000084dd 	.word	0x000084dd
+    8090:	000084dd 	.word	0x000084dd
+	...
+    809c:	000084dd 	.word	0x000084dd
+    80a0:	000084dd 	.word	0x000084dd
+    80a4:	000084dd 	.word	0x000084dd
+    80a8:	000084dd 	.word	0x000084dd
+    80ac:	000084dd 	.word	0x000084dd
+    80b0:	00000000 	.word	0x00000000
+
+000080b4 <__do_global_dtors_aux>:
+    80b4:	b510      	push	{r4, lr}
+    80b6:	4c06      	ldr	r4, [pc, #24]	; (80d0 <__do_global_dtors_aux+0x1c>)
+    80b8:	7823      	ldrb	r3, [r4, #0]
+    80ba:	2b00      	cmp	r3, #0
+    80bc:	d107      	bne.n	80ce <__do_global_dtors_aux+0x1a>
+    80be:	4b05      	ldr	r3, [pc, #20]	; (80d4 <__do_global_dtors_aux+0x20>)
+    80c0:	2b00      	cmp	r3, #0
+    80c2:	d002      	beq.n	80ca <__do_global_dtors_aux+0x16>
+    80c4:	4804      	ldr	r0, [pc, #16]	; (80d8 <__do_global_dtors_aux+0x24>)
+    80c6:	e000      	b.n	80ca <__do_global_dtors_aux+0x16>
+    80c8:	bf00      	nop
+    80ca:	2301      	movs	r3, #1
+    80cc:	7023      	strb	r3, [r4, #0]
+    80ce:	bd10      	pop	{r4, pc}
+    80d0:	20000004 	.word	0x20000004
+    80d4:	00000000 	.word	0x00000000
+    80d8:	00008770 	.word	0x00008770
+
+000080dc <frame_dummy>:
+    80dc:	4b08      	ldr	r3, [pc, #32]	; (8100 <frame_dummy+0x24>)
+    80de:	b510      	push	{r4, lr}
+    80e0:	2b00      	cmp	r3, #0
+    80e2:	d003      	beq.n	80ec <frame_dummy+0x10>
+    80e4:	4907      	ldr	r1, [pc, #28]	; (8104 <frame_dummy+0x28>)
+    80e6:	4808      	ldr	r0, [pc, #32]	; (8108 <frame_dummy+0x2c>)
+    80e8:	e000      	b.n	80ec <frame_dummy+0x10>
+    80ea:	bf00      	nop
+    80ec:	4807      	ldr	r0, [pc, #28]	; (810c <frame_dummy+0x30>)
+    80ee:	6803      	ldr	r3, [r0, #0]
+    80f0:	2b00      	cmp	r3, #0
+    80f2:	d100      	bne.n	80f6 <frame_dummy+0x1a>
+    80f4:	bd10      	pop	{r4, pc}
+    80f6:	4b06      	ldr	r3, [pc, #24]	; (8110 <frame_dummy+0x34>)
+    80f8:	2b00      	cmp	r3, #0
+    80fa:	d0fb      	beq.n	80f4 <frame_dummy+0x18>
+    80fc:	4798      	blx	r3
+    80fe:	e7f9      	b.n	80f4 <frame_dummy+0x18>
+    8100:	00000000 	.word	0x00000000
+    8104:	20000008 	.word	0x20000008
+    8108:	00008770 	.word	0x00008770
+    810c:	00008770 	.word	0x00008770
+    8110:	00000000 	.word	0x00000000
+
+00008114 <SERCOM0_Handler>:
+	/* Get the vector number from the lookup table for the requested SERCOM */
+	return (enum system_interrupt_vector)sercom_int_vectors[instance_index];
+}
+
+/** Auto-generate a set of interrupt handlers for each SERCOM in the device */
+MREPEAT(SERCOM_INST_NUM, _SERCOM_INTERRUPT_HANDLER, ~)
+    8114:	b580      	push	{r7, lr}
+    8116:	af00      	add	r7, sp, #0
+    8118:	4b03      	ldr	r3, [pc, #12]	; (8128 <SERCOM0_Handler+0x14>)
+    811a:	681b      	ldr	r3, [r3, #0]
+    811c:	2000      	movs	r0, #0
+    811e:	4798      	blx	r3
+    8120:	46c0      	nop			; (mov r8, r8)
+    8122:	46bd      	mov	sp, r7
+    8124:	bd80      	pop	{r7, pc}
+    8126:	46c0      	nop			; (mov r8, r8)
+    8128:	20000020 	.word	0x20000020
+
+0000812c <SERCOM1_Handler>:
+    812c:	b580      	push	{r7, lr}
+    812e:	af00      	add	r7, sp, #0
+    8130:	4b03      	ldr	r3, [pc, #12]	; (8140 <SERCOM1_Handler+0x14>)
+    8132:	685b      	ldr	r3, [r3, #4]
+    8134:	2001      	movs	r0, #1
+    8136:	4798      	blx	r3
+    8138:	46c0      	nop			; (mov r8, r8)
+    813a:	46bd      	mov	sp, r7
+    813c:	bd80      	pop	{r7, pc}
+    813e:	46c0      	nop			; (mov r8, r8)
+    8140:	20000020 	.word	0x20000020
+
+00008144 <SERCOM2_Handler>:
+    8144:	b580      	push	{r7, lr}
+    8146:	af00      	add	r7, sp, #0
+    8148:	4b03      	ldr	r3, [pc, #12]	; (8158 <SERCOM2_Handler+0x14>)
+    814a:	689b      	ldr	r3, [r3, #8]
+    814c:	2002      	movs	r0, #2
+    814e:	4798      	blx	r3
+    8150:	46c0      	nop			; (mov r8, r8)
+    8152:	46bd      	mov	sp, r7
+    8154:	bd80      	pop	{r7, pc}
+    8156:	46c0      	nop			; (mov r8, r8)
+    8158:	20000020 	.word	0x20000020
+
+0000815c <SERCOM3_Handler>:
+    815c:	b580      	push	{r7, lr}
+    815e:	af00      	add	r7, sp, #0
+    8160:	4b03      	ldr	r3, [pc, #12]	; (8170 <SERCOM3_Handler+0x14>)
+    8162:	68db      	ldr	r3, [r3, #12]
+    8164:	2003      	movs	r0, #3
+    8166:	4798      	blx	r3
+    8168:	46c0      	nop			; (mov r8, r8)
+    816a:	46bd      	mov	sp, r7
+    816c:	bd80      	pop	{r7, pc}
+    816e:	46c0      	nop			; (mov r8, r8)
+    8170:	20000020 	.word	0x20000020
+
+00008174 <SERCOM4_Handler>:
+    8174:	b580      	push	{r7, lr}
+    8176:	af00      	add	r7, sp, #0
+    8178:	4b03      	ldr	r3, [pc, #12]	; (8188 <SERCOM4_Handler+0x14>)
+    817a:	691b      	ldr	r3, [r3, #16]
+    817c:	2004      	movs	r0, #4
+    817e:	4798      	blx	r3
+    8180:	46c0      	nop			; (mov r8, r8)
+    8182:	46bd      	mov	sp, r7
+    8184:	bd80      	pop	{r7, pc}
+    8186:	46c0      	nop			; (mov r8, r8)
+    8188:	20000020 	.word	0x20000020
+
+0000818c <SERCOM5_Handler>:
+    818c:	b580      	push	{r7, lr}
+    818e:	af00      	add	r7, sp, #0
+    8190:	4b03      	ldr	r3, [pc, #12]	; (81a0 <SERCOM5_Handler+0x14>)
+    8192:	695b      	ldr	r3, [r3, #20]
+    8194:	2005      	movs	r0, #5
+    8196:	4798      	blx	r3
+    8198:	46c0      	nop			; (mov r8, r8)
+    819a:	46bd      	mov	sp, r7
+    819c:	bd80      	pop	{r7, pc}
+    819e:	46c0      	nop			; (mov r8, r8)
+    81a0:	20000020 	.word	0x20000020
+
+000081a4 <system_pinmux_get_config_defaults>:
+ *
+ * \param[out] config  Configuration structure to initialize to default values
+ */
+static inline void system_pinmux_get_config_defaults(
+		struct system_pinmux_config *const config)
+{
+    81a4:	b580      	push	{r7, lr}
+    81a6:	b082      	sub	sp, #8
+    81a8:	af00      	add	r7, sp, #0
+    81aa:	6078      	str	r0, [r7, #4]
+	/* Sanity check arguments */
+	Assert(config);
+
+	/* Default configuration values */
+	config->mux_position = SYSTEM_PINMUX_GPIO;
+    81ac:	687b      	ldr	r3, [r7, #4]
+    81ae:	2280      	movs	r2, #128	; 0x80
+    81b0:	701a      	strb	r2, [r3, #0]
+	config->direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
+    81b2:	687b      	ldr	r3, [r7, #4]
+    81b4:	2200      	movs	r2, #0
+    81b6:	705a      	strb	r2, [r3, #1]
+	config->input_pull   = SYSTEM_PINMUX_PIN_PULL_UP;
+    81b8:	687b      	ldr	r3, [r7, #4]
+    81ba:	2201      	movs	r2, #1
+    81bc:	709a      	strb	r2, [r3, #2]
+	config->powersave    = false;
+    81be:	687b      	ldr	r3, [r7, #4]
+    81c0:	2200      	movs	r2, #0
+    81c2:	70da      	strb	r2, [r3, #3]
+}
+    81c4:	46c0      	nop			; (mov r8, r8)
+    81c6:	46bd      	mov	sp, r7
+    81c8:	b002      	add	sp, #8
+    81ca:	bd80      	pop	{r7, pc}
+
+000081cc <port_pin_set_config>:
+ *  \param[in] config    Configuration settings for the pin
+ */
+void port_pin_set_config(
+		const uint8_t gpio_pin,
+		const struct port_config *const config)
+{
+    81cc:	b580      	push	{r7, lr}
+    81ce:	b084      	sub	sp, #16
+    81d0:	af00      	add	r7, sp, #0
+    81d2:	0002      	movs	r2, r0
+    81d4:	6039      	str	r1, [r7, #0]
+    81d6:	1dfb      	adds	r3, r7, #7
+    81d8:	701a      	strb	r2, [r3, #0]
+	/* Sanity check arguments */
+	Assert(config);
+
+	struct system_pinmux_config pinmux_config;
+	system_pinmux_get_config_defaults(&pinmux_config);
+    81da:	230c      	movs	r3, #12
+    81dc:	18fb      	adds	r3, r7, r3
+    81de:	0018      	movs	r0, r3
+    81e0:	4b10      	ldr	r3, [pc, #64]	; (8224 <port_pin_set_config+0x58>)
+    81e2:	4798      	blx	r3
+
+	pinmux_config.mux_position = SYSTEM_PINMUX_GPIO;
+    81e4:	230c      	movs	r3, #12
+    81e6:	18fb      	adds	r3, r7, r3
+    81e8:	2280      	movs	r2, #128	; 0x80
+    81ea:	701a      	strb	r2, [r3, #0]
+	pinmux_config.direction    = (enum system_pinmux_pin_dir)config->direction;
+    81ec:	683b      	ldr	r3, [r7, #0]
+    81ee:	781a      	ldrb	r2, [r3, #0]
+    81f0:	230c      	movs	r3, #12
+    81f2:	18fb      	adds	r3, r7, r3
+    81f4:	705a      	strb	r2, [r3, #1]
+	pinmux_config.input_pull   = (enum system_pinmux_pin_pull)config->input_pull;
+    81f6:	683b      	ldr	r3, [r7, #0]
+    81f8:	785a      	ldrb	r2, [r3, #1]
+    81fa:	230c      	movs	r3, #12
+    81fc:	18fb      	adds	r3, r7, r3
+    81fe:	709a      	strb	r2, [r3, #2]
+	pinmux_config.powersave    = config->powersave;
+    8200:	683b      	ldr	r3, [r7, #0]
+    8202:	789a      	ldrb	r2, [r3, #2]
+    8204:	230c      	movs	r3, #12
+    8206:	18fb      	adds	r3, r7, r3
+    8208:	70da      	strb	r2, [r3, #3]
+
+	system_pinmux_pin_set_config(gpio_pin, &pinmux_config);
+    820a:	230c      	movs	r3, #12
+    820c:	18fa      	adds	r2, r7, r3
+    820e:	1dfb      	adds	r3, r7, #7
+    8210:	781b      	ldrb	r3, [r3, #0]
+    8212:	0011      	movs	r1, r2
+    8214:	0018      	movs	r0, r3
+    8216:	4b04      	ldr	r3, [pc, #16]	; (8228 <port_pin_set_config+0x5c>)
+    8218:	4798      	blx	r3
+}
+    821a:	46c0      	nop			; (mov r8, r8)
+    821c:	46bd      	mov	sp, r7
+    821e:	b004      	add	sp, #16
+    8220:	bd80      	pop	{r7, pc}
+    8222:	46c0      	nop			; (mov r8, r8)
+    8224:	000081a5 	.word	0x000081a5
+    8228:	0000839d 	.word	0x0000839d
+
+0000822c <system_pinmux_get_group_from_gpio_pin>:
+ *
+ * \return Base address of the associated PORT module.
+ */
+static inline PortGroup* system_pinmux_get_group_from_gpio_pin(
+		const uint8_t gpio_pin)
+{
+    822c:	b580      	push	{r7, lr}
+    822e:	b084      	sub	sp, #16
+    8230:	af00      	add	r7, sp, #0
+    8232:	0002      	movs	r2, r0
+    8234:	1dfb      	adds	r3, r7, #7
+    8236:	701a      	strb	r2, [r3, #0]
+	uint8_t port_index  = (gpio_pin / 128);
+    8238:	230f      	movs	r3, #15
+    823a:	18fb      	adds	r3, r7, r3
+    823c:	1dfa      	adds	r2, r7, #7
+    823e:	7812      	ldrb	r2, [r2, #0]
+    8240:	09d2      	lsrs	r2, r2, #7
+    8242:	701a      	strb	r2, [r3, #0]
+	uint8_t group_index = (gpio_pin / 32);
+    8244:	230e      	movs	r3, #14
+    8246:	18fb      	adds	r3, r7, r3
+    8248:	1dfa      	adds	r2, r7, #7
+    824a:	7812      	ldrb	r2, [r2, #0]
+    824c:	0952      	lsrs	r2, r2, #5
+    824e:	701a      	strb	r2, [r3, #0]
+
+	/* Array of available ports */
+	Port *const ports[PORT_INST_NUM] = PORT_INSTS;
+    8250:	4b0d      	ldr	r3, [pc, #52]	; (8288 <system_pinmux_get_group_from_gpio_pin+0x5c>)
+    8252:	60bb      	str	r3, [r7, #8]
+
+	if (port_index < PORT_INST_NUM) {
+    8254:	230f      	movs	r3, #15
+    8256:	18fb      	adds	r3, r7, r3
+    8258:	781b      	ldrb	r3, [r3, #0]
+    825a:	2b00      	cmp	r3, #0
+    825c:	d10f      	bne.n	827e <system_pinmux_get_group_from_gpio_pin+0x52>
+		return &(ports[port_index]->Group[group_index]);
+    825e:	230f      	movs	r3, #15
+    8260:	18fb      	adds	r3, r7, r3
+    8262:	781b      	ldrb	r3, [r3, #0]
+    8264:	009b      	lsls	r3, r3, #2
+    8266:	2210      	movs	r2, #16
+    8268:	4694      	mov	ip, r2
+    826a:	44bc      	add	ip, r7
+    826c:	4463      	add	r3, ip
+    826e:	3b08      	subs	r3, #8
+    8270:	681a      	ldr	r2, [r3, #0]
+    8272:	230e      	movs	r3, #14
+    8274:	18fb      	adds	r3, r7, r3
+    8276:	781b      	ldrb	r3, [r3, #0]
+    8278:	01db      	lsls	r3, r3, #7
+    827a:	18d3      	adds	r3, r2, r3
+    827c:	e000      	b.n	8280 <system_pinmux_get_group_from_gpio_pin+0x54>
+	} else {
+		Assert(false);
+		return NULL;
+    827e:	2300      	movs	r3, #0
+	}
+}
+    8280:	0018      	movs	r0, r3
+    8282:	46bd      	mov	sp, r7
+    8284:	b004      	add	sp, #16
+    8286:	bd80      	pop	{r7, pc}
+    8288:	41004400 	.word	0x41004400
+
+0000828c <_system_pinmux_config>:
+ */
+static void _system_pinmux_config(
+		PortGroup *const port,
+		const uint32_t pin_mask,
+		const struct system_pinmux_config *const config)
+{
+    828c:	b580      	push	{r7, lr}
+    828e:	b088      	sub	sp, #32
+    8290:	af00      	add	r7, sp, #0
+    8292:	60f8      	str	r0, [r7, #12]
+    8294:	60b9      	str	r1, [r7, #8]
+    8296:	607a      	str	r2, [r7, #4]
+	Assert(port);
+	Assert(config);
+
+	/* Track the configuration bits into a temporary variable before writing */
+	uint32_t pin_cfg = 0;
+    8298:	2300      	movs	r3, #0
+    829a:	61fb      	str	r3, [r7, #28]
+
+	/* Enabled powersave mode, don't create configuration */
+	if (!config->powersave) {
+    829c:	687b      	ldr	r3, [r7, #4]
+    829e:	78db      	ldrb	r3, [r3, #3]
+    82a0:	2201      	movs	r2, #1
+    82a2:	4053      	eors	r3, r2
+    82a4:	b2db      	uxtb	r3, r3
+    82a6:	2b00      	cmp	r3, #0
+    82a8:	d035      	beq.n	8316 <_system_pinmux_config+0x8a>
+		/* Enable the pin peripheral MUX flag if non-GPIO selected (pinmux will
+		 * be written later) and store the new MUX mask */
+		if (config->mux_position != SYSTEM_PINMUX_GPIO) {
+    82aa:	687b      	ldr	r3, [r7, #4]
+    82ac:	781b      	ldrb	r3, [r3, #0]
+    82ae:	2b80      	cmp	r3, #128	; 0x80
+    82b0:	d00b      	beq.n	82ca <_system_pinmux_config+0x3e>
+			pin_cfg |= PORT_WRCONFIG_PMUXEN;
+    82b2:	69fb      	ldr	r3, [r7, #28]
+    82b4:	2280      	movs	r2, #128	; 0x80
+    82b6:	0252      	lsls	r2, r2, #9
+    82b8:	4313      	orrs	r3, r2
+    82ba:	61fb      	str	r3, [r7, #28]
+			pin_cfg |= (config->mux_position << PORT_WRCONFIG_PMUX_Pos);
+    82bc:	687b      	ldr	r3, [r7, #4]
+    82be:	781b      	ldrb	r3, [r3, #0]
+    82c0:	061b      	lsls	r3, r3, #24
+    82c2:	001a      	movs	r2, r3
+    82c4:	69fb      	ldr	r3, [r7, #28]
+    82c6:	4313      	orrs	r3, r2
+    82c8:	61fb      	str	r3, [r7, #28]
+		}
+
+		/* Check if the user has requested that the input buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_INPUT) ||
+    82ca:	687b      	ldr	r3, [r7, #4]
+    82cc:	785b      	ldrb	r3, [r3, #1]
+    82ce:	2b00      	cmp	r3, #0
+    82d0:	d003      	beq.n	82da <_system_pinmux_config+0x4e>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+    82d2:	687b      	ldr	r3, [r7, #4]
+    82d4:	785b      	ldrb	r3, [r3, #1]
+			pin_cfg |= PORT_WRCONFIG_PMUXEN;
+			pin_cfg |= (config->mux_position << PORT_WRCONFIG_PMUX_Pos);
+		}
+
+		/* Check if the user has requested that the input buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_INPUT) ||
+    82d6:	2b02      	cmp	r3, #2
+    82d8:	d110      	bne.n	82fc <_system_pinmux_config+0x70>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+			/* Enable input buffer flag */
+			pin_cfg |= PORT_WRCONFIG_INEN;
+    82da:	69fb      	ldr	r3, [r7, #28]
+    82dc:	2280      	movs	r2, #128	; 0x80
+    82de:	0292      	lsls	r2, r2, #10
+    82e0:	4313      	orrs	r3, r2
+    82e2:	61fb      	str	r3, [r7, #28]
+
+			/* Enable pull-up/pull-down control flag if requested */
+			if (config->input_pull != SYSTEM_PINMUX_PIN_PULL_NONE) {
+    82e4:	687b      	ldr	r3, [r7, #4]
+    82e6:	789b      	ldrb	r3, [r3, #2]
+    82e8:	2b00      	cmp	r3, #0
+    82ea:	d004      	beq.n	82f6 <_system_pinmux_config+0x6a>
+				pin_cfg |= PORT_WRCONFIG_PULLEN;
+    82ec:	69fb      	ldr	r3, [r7, #28]
+    82ee:	2280      	movs	r2, #128	; 0x80
+    82f0:	02d2      	lsls	r2, r2, #11
+    82f2:	4313      	orrs	r3, r2
+    82f4:	61fb      	str	r3, [r7, #28]
+			}
+
+			/* Clear the port DIR bits to disable the output buffer */
+			port->DIRCLR.reg = pin_mask;
+    82f6:	68fb      	ldr	r3, [r7, #12]
+    82f8:	68ba      	ldr	r2, [r7, #8]
+    82fa:	605a      	str	r2, [r3, #4]
+		}
+
+		/* Check if the user has requested that the output buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT) ||
+    82fc:	687b      	ldr	r3, [r7, #4]
+    82fe:	785b      	ldrb	r3, [r3, #1]
+    8300:	2b01      	cmp	r3, #1
+    8302:	d003      	beq.n	830c <_system_pinmux_config+0x80>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+    8304:	687b      	ldr	r3, [r7, #4]
+    8306:	785b      	ldrb	r3, [r3, #1]
+			/* Clear the port DIR bits to disable the output buffer */
+			port->DIRCLR.reg = pin_mask;
+		}
+
+		/* Check if the user has requested that the output buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT) ||
+    8308:	2b02      	cmp	r3, #2
+    830a:	d107      	bne.n	831c <_system_pinmux_config+0x90>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+			/* Cannot use a pull-up if the output driver is enabled,
+			 * if requested the input buffer can only sample the current
+			 * output state */
+			pin_cfg &= ~PORT_WRCONFIG_PULLEN;
+    830c:	69fb      	ldr	r3, [r7, #28]
+    830e:	4a22      	ldr	r2, [pc, #136]	; (8398 <_system_pinmux_config+0x10c>)
+    8310:	4013      	ands	r3, r2
+    8312:	61fb      	str	r3, [r7, #28]
+    8314:	e002      	b.n	831c <_system_pinmux_config+0x90>
+		}
+	} else {
+		port->DIRCLR.reg = pin_mask;
+    8316:	68fb      	ldr	r3, [r7, #12]
+    8318:	68ba      	ldr	r2, [r7, #8]
+    831a:	605a      	str	r2, [r3, #4]
+	}
+
+	/* The Write Configuration register (WRCONFIG) requires the
+	 * pins to to grouped into two 16-bit half-words - split them out here */
+	uint32_t lower_pin_mask = (pin_mask & 0xFFFF);
+    831c:	68bb      	ldr	r3, [r7, #8]
+    831e:	041b      	lsls	r3, r3, #16
+    8320:	0c1b      	lsrs	r3, r3, #16
+    8322:	61bb      	str	r3, [r7, #24]
+	uint32_t upper_pin_mask = (pin_mask >> 16);
+    8324:	68bb      	ldr	r3, [r7, #8]
+    8326:	0c1b      	lsrs	r3, r3, #16
+    8328:	617b      	str	r3, [r7, #20]
+
+	/* Configure the lower 16-bits of the port to the desired configuration,
+	 * including the pin peripheral multiplexer just in case it is enabled */
+	port->WRCONFIG.reg
+		= (lower_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+    832a:	69ba      	ldr	r2, [r7, #24]
+    832c:	69fb      	ldr	r3, [r7, #28]
+    832e:	4313      	orrs	r3, r2
+			pin_cfg | PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG;
+    8330:	22a0      	movs	r2, #160	; 0xa0
+    8332:	05d2      	lsls	r2, r2, #23
+    8334:	431a      	orrs	r2, r3
+	uint32_t upper_pin_mask = (pin_mask >> 16);
+
+	/* Configure the lower 16-bits of the port to the desired configuration,
+	 * including the pin peripheral multiplexer just in case it is enabled */
+	port->WRCONFIG.reg
+		= (lower_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+    8336:	68fb      	ldr	r3, [r7, #12]
+    8338:	629a      	str	r2, [r3, #40]	; 0x28
+			pin_cfg | PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG;
+
+	/* Configure the upper 16-bits of the port to the desired configuration,
+	 * including the pin peripheral multiplexer just in case it is enabled */
+	port->WRCONFIG.reg
+		= (upper_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+    833a:	697a      	ldr	r2, [r7, #20]
+    833c:	69fb      	ldr	r3, [r7, #28]
+    833e:	4313      	orrs	r3, r2
+			pin_cfg | PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG |
+    8340:	22d0      	movs	r2, #208	; 0xd0
+    8342:	0612      	lsls	r2, r2, #24
+    8344:	431a      	orrs	r2, r3
+			pin_cfg | PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG;
+
+	/* Configure the upper 16-bits of the port to the desired configuration,
+	 * including the pin peripheral multiplexer just in case it is enabled */
+	port->WRCONFIG.reg
+		= (upper_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+    8346:	68fb      	ldr	r3, [r7, #12]
+    8348:	629a      	str	r2, [r3, #40]	; 0x28
+			pin_cfg | PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG |
+			PORT_WRCONFIG_HWSEL;
+
+	if(!config->powersave) {
+    834a:	687b      	ldr	r3, [r7, #4]
+    834c:	78db      	ldrb	r3, [r3, #3]
+    834e:	2201      	movs	r2, #1
+    8350:	4053      	eors	r3, r2
+    8352:	b2db      	uxtb	r3, r3
+    8354:	2b00      	cmp	r3, #0
+    8356:	d01a      	beq.n	838e <_system_pinmux_config+0x102>
+		/* Set the pull-up state once the port pins are configured if one was
+		 * requested and it does not violate the valid set of port
+		 * configurations */
+		if (pin_cfg & PORT_WRCONFIG_PULLEN) {
+    8358:	69fa      	ldr	r2, [r7, #28]
+    835a:	2380      	movs	r3, #128	; 0x80
+    835c:	02db      	lsls	r3, r3, #11
+    835e:	4013      	ands	r3, r2
+    8360:	d00a      	beq.n	8378 <_system_pinmux_config+0xec>
+			/* Set the OUT register bits to enable the pull-up if requested,
+			 * clear to enable pull-down */
+			if (config->input_pull == SYSTEM_PINMUX_PIN_PULL_UP) {
+    8362:	687b      	ldr	r3, [r7, #4]
+    8364:	789b      	ldrb	r3, [r3, #2]
+    8366:	2b01      	cmp	r3, #1
+    8368:	d103      	bne.n	8372 <_system_pinmux_config+0xe6>
+				port->OUTSET.reg = pin_mask;
+    836a:	68fb      	ldr	r3, [r7, #12]
+    836c:	68ba      	ldr	r2, [r7, #8]
+    836e:	619a      	str	r2, [r3, #24]
+    8370:	e002      	b.n	8378 <_system_pinmux_config+0xec>
+			} else {
+				port->OUTCLR.reg = pin_mask;
+    8372:	68fb      	ldr	r3, [r7, #12]
+    8374:	68ba      	ldr	r2, [r7, #8]
+    8376:	615a      	str	r2, [r3, #20]
+			}
+		}
+
+		/* Check if the user has requested that the output buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT) ||
+    8378:	687b      	ldr	r3, [r7, #4]
+    837a:	785b      	ldrb	r3, [r3, #1]
+    837c:	2b01      	cmp	r3, #1
+    837e:	d003      	beq.n	8388 <_system_pinmux_config+0xfc>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+    8380:	687b      	ldr	r3, [r7, #4]
+    8382:	785b      	ldrb	r3, [r3, #1]
+				port->OUTCLR.reg = pin_mask;
+			}
+		}
+
+		/* Check if the user has requested that the output buffer be enabled */
+		if ((config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT) ||
+    8384:	2b02      	cmp	r3, #2
+    8386:	d102      	bne.n	838e <_system_pinmux_config+0x102>
+				(config->direction == SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK)) {
+			/* Set the port DIR bits to enable the output buffer */
+			port->DIRSET.reg = pin_mask;
+    8388:	68fb      	ldr	r3, [r7, #12]
+    838a:	68ba      	ldr	r2, [r7, #8]
+    838c:	609a      	str	r2, [r3, #8]
+		}
+	}
+}
+    838e:	46c0      	nop			; (mov r8, r8)
+    8390:	46bd      	mov	sp, r7
+    8392:	b008      	add	sp, #32
+    8394:	bd80      	pop	{r7, pc}
+    8396:	46c0      	nop			; (mov r8, r8)
+    8398:	fffbffff 	.word	0xfffbffff
+
+0000839c <system_pinmux_pin_set_config>:
+ * \param[in] config    Configuration settings for the pin
+ */
+void system_pinmux_pin_set_config(
+		const uint8_t gpio_pin,
+		const struct system_pinmux_config *const config)
+{
+    839c:	b580      	push	{r7, lr}
+    839e:	b084      	sub	sp, #16
+    83a0:	af00      	add	r7, sp, #0
+    83a2:	0002      	movs	r2, r0
+    83a4:	6039      	str	r1, [r7, #0]
+    83a6:	1dfb      	adds	r3, r7, #7
+    83a8:	701a      	strb	r2, [r3, #0]
+	PortGroup *const port = system_pinmux_get_group_from_gpio_pin(gpio_pin);
+    83aa:	1dfb      	adds	r3, r7, #7
+    83ac:	781b      	ldrb	r3, [r3, #0]
+    83ae:	0018      	movs	r0, r3
+    83b0:	4b0a      	ldr	r3, [pc, #40]	; (83dc <system_pinmux_pin_set_config+0x40>)
+    83b2:	4798      	blx	r3
+    83b4:	0003      	movs	r3, r0
+    83b6:	60fb      	str	r3, [r7, #12]
+	uint32_t pin_mask = (1UL << (gpio_pin % 32));
+    83b8:	1dfb      	adds	r3, r7, #7
+    83ba:	781b      	ldrb	r3, [r3, #0]
+    83bc:	221f      	movs	r2, #31
+    83be:	4013      	ands	r3, r2
+    83c0:	2201      	movs	r2, #1
+    83c2:	409a      	lsls	r2, r3
+    83c4:	0013      	movs	r3, r2
+    83c6:	60bb      	str	r3, [r7, #8]
+
+	_system_pinmux_config(port, pin_mask, config);
+    83c8:	683a      	ldr	r2, [r7, #0]
+    83ca:	68b9      	ldr	r1, [r7, #8]
+    83cc:	68fb      	ldr	r3, [r7, #12]
+    83ce:	0018      	movs	r0, r3
+    83d0:	4b03      	ldr	r3, [pc, #12]	; (83e0 <system_pinmux_pin_set_config+0x44>)
+    83d2:	4798      	blx	r3
+}
+    83d4:	46c0      	nop			; (mov r8, r8)
+    83d6:	46bd      	mov	sp, r7
+    83d8:	b004      	add	sp, #16
+    83da:	bd80      	pop	{r7, pc}
+    83dc:	0000822d 	.word	0x0000822d
+    83e0:	0000828d 	.word	0x0000828d
+
+000083e4 <Reset_Handler>:
+/**
+ * \brief This is the code that gets called on processor reset.
+ * To initialize the device, and call the main() routine.
+ */
+void Reset_Handler(void)
+{
+    83e4:	b580      	push	{r7, lr}
+    83e6:	b082      	sub	sp, #8
+    83e8:	af00      	add	r7, sp, #0
+        uint32_t *pSrc, *pDest;
+
+        /* Initialize the relocate segment */
+        pSrc = &_etext;
+    83ea:	4b2f      	ldr	r3, [pc, #188]	; (84a8 <Reset_Handler+0xc4>)
+    83ec:	607b      	str	r3, [r7, #4]
+        pDest = &_srelocate;
+    83ee:	4b2f      	ldr	r3, [pc, #188]	; (84ac <Reset_Handler+0xc8>)
+    83f0:	603b      	str	r3, [r7, #0]
+
+        if (pSrc != pDest) {
+    83f2:	687a      	ldr	r2, [r7, #4]
+    83f4:	683b      	ldr	r3, [r7, #0]
+    83f6:	429a      	cmp	r2, r3
+    83f8:	d00c      	beq.n	8414 <Reset_Handler+0x30>
+                for (; pDest < &_erelocate;) {
+    83fa:	e007      	b.n	840c <Reset_Handler+0x28>
+                        *pDest++ = *pSrc++;
+    83fc:	683b      	ldr	r3, [r7, #0]
+    83fe:	1d1a      	adds	r2, r3, #4
+    8400:	603a      	str	r2, [r7, #0]
+    8402:	687a      	ldr	r2, [r7, #4]
+    8404:	1d11      	adds	r1, r2, #4
+    8406:	6079      	str	r1, [r7, #4]
+    8408:	6812      	ldr	r2, [r2, #0]
+    840a:	601a      	str	r2, [r3, #0]
+        /* Initialize the relocate segment */
+        pSrc = &_etext;
+        pDest = &_srelocate;
+
+        if (pSrc != pDest) {
+                for (; pDest < &_erelocate;) {
+    840c:	683a      	ldr	r2, [r7, #0]
+    840e:	4b28      	ldr	r3, [pc, #160]	; (84b0 <Reset_Handler+0xcc>)
+    8410:	429a      	cmp	r2, r3
+    8412:	d3f3      	bcc.n	83fc <Reset_Handler+0x18>
+                        *pDest++ = *pSrc++;
+                }
+        }
+
+        /* Clear the zero segment */
+        for (pDest = &_szero; pDest < &_ezero;) {
+    8414:	4b27      	ldr	r3, [pc, #156]	; (84b4 <Reset_Handler+0xd0>)
+    8416:	603b      	str	r3, [r7, #0]
+    8418:	e004      	b.n	8424 <Reset_Handler+0x40>
+                *pDest++ = 0;
+    841a:	683b      	ldr	r3, [r7, #0]
+    841c:	1d1a      	adds	r2, r3, #4
+    841e:	603a      	str	r2, [r7, #0]
+    8420:	2200      	movs	r2, #0
+    8422:	601a      	str	r2, [r3, #0]
+                        *pDest++ = *pSrc++;
+                }
+        }
+
+        /* Clear the zero segment */
+        for (pDest = &_szero; pDest < &_ezero;) {
+    8424:	683a      	ldr	r2, [r7, #0]
+    8426:	4b24      	ldr	r3, [pc, #144]	; (84b8 <Reset_Handler+0xd4>)
+    8428:	429a      	cmp	r2, r3
+    842a:	d3f6      	bcc.n	841a <Reset_Handler+0x36>
+                *pDest++ = 0;
+        }
+
+        /* Set the vector table base address */
+        pSrc = (uint32_t *) & _sfixed;
+    842c:	4b23      	ldr	r3, [pc, #140]	; (84bc <Reset_Handler+0xd8>)
+    842e:	607b      	str	r3, [r7, #4]
+        SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
+    8430:	4b23      	ldr	r3, [pc, #140]	; (84c0 <Reset_Handler+0xdc>)
+    8432:	687a      	ldr	r2, [r7, #4]
+    8434:	21ff      	movs	r1, #255	; 0xff
+    8436:	438a      	bics	r2, r1
+    8438:	609a      	str	r2, [r3, #8]
+
+        /* Change default QOS values to have the best performance and correct USB behaviour */
+        SBMATRIX->SFR[SBMATRIX_SLAVE_HMCRAMC0].reg = 2;
+    843a:	4a22      	ldr	r2, [pc, #136]	; (84c4 <Reset_Handler+0xe0>)
+    843c:	2390      	movs	r3, #144	; 0x90
+    843e:	005b      	lsls	r3, r3, #1
+    8440:	2102      	movs	r1, #2
+    8442:	50d1      	str	r1, [r2, r3]
+#if defined(ID_USB)
+        USB->DEVICE.QOSCTRL.bit.CQOS = 2;
+    8444:	4a20      	ldr	r2, [pc, #128]	; (84c8 <Reset_Handler+0xe4>)
+    8446:	78d3      	ldrb	r3, [r2, #3]
+    8448:	2103      	movs	r1, #3
+    844a:	438b      	bics	r3, r1
+    844c:	1c19      	adds	r1, r3, #0
+    844e:	2302      	movs	r3, #2
+    8450:	430b      	orrs	r3, r1
+    8452:	70d3      	strb	r3, [r2, #3]
+        USB->DEVICE.QOSCTRL.bit.DQOS = 2;
+    8454:	4a1c      	ldr	r2, [pc, #112]	; (84c8 <Reset_Handler+0xe4>)
+    8456:	78d3      	ldrb	r3, [r2, #3]
+    8458:	210c      	movs	r1, #12
+    845a:	438b      	bics	r3, r1
+    845c:	1c19      	adds	r1, r3, #0
+    845e:	2308      	movs	r3, #8
+    8460:	430b      	orrs	r3, r1
+    8462:	70d3      	strb	r3, [r2, #3]
+#endif
+        DMAC->QOSCTRL.bit.DQOS = 2;
+    8464:	4a19      	ldr	r2, [pc, #100]	; (84cc <Reset_Handler+0xe8>)
+    8466:	7b93      	ldrb	r3, [r2, #14]
+    8468:	2130      	movs	r1, #48	; 0x30
+    846a:	438b      	bics	r3, r1
+    846c:	1c19      	adds	r1, r3, #0
+    846e:	2320      	movs	r3, #32
+    8470:	430b      	orrs	r3, r1
+    8472:	7393      	strb	r3, [r2, #14]
+        DMAC->QOSCTRL.bit.FQOS = 2;
+    8474:	4a15      	ldr	r2, [pc, #84]	; (84cc <Reset_Handler+0xe8>)
+    8476:	7b93      	ldrb	r3, [r2, #14]
+    8478:	210c      	movs	r1, #12
+    847a:	438b      	bics	r3, r1
+    847c:	1c19      	adds	r1, r3, #0
+    847e:	2308      	movs	r3, #8
+    8480:	430b      	orrs	r3, r1
+    8482:	7393      	strb	r3, [r2, #14]
+        DMAC->QOSCTRL.bit.WRBQOS = 2;
+    8484:	4a11      	ldr	r2, [pc, #68]	; (84cc <Reset_Handler+0xe8>)
+    8486:	7b93      	ldrb	r3, [r2, #14]
+    8488:	2103      	movs	r1, #3
+    848a:	438b      	bics	r3, r1
+    848c:	1c19      	adds	r1, r3, #0
+    848e:	2302      	movs	r3, #2
+    8490:	430b      	orrs	r3, r1
+    8492:	7393      	strb	r3, [r2, #14]
+
+        /* Overwriting the default value of the NVMCTRL.CTRLB.MANW bit (errata reference 13134) */
+        NVMCTRL->CTRLB.bit.MANW = 1;
+    8494:	4a0e      	ldr	r2, [pc, #56]	; (84d0 <Reset_Handler+0xec>)
+    8496:	6853      	ldr	r3, [r2, #4]
+    8498:	2180      	movs	r1, #128	; 0x80
+    849a:	430b      	orrs	r3, r1
+    849c:	6053      	str	r3, [r2, #4]
+
+        /* Initialize the C library */
+        __libc_init_array();
+    849e:	4b0d      	ldr	r3, [pc, #52]	; (84d4 <Reset_Handler+0xf0>)
+    84a0:	4798      	blx	r3
+
+        /* Branch to main function */
+        main();
+    84a2:	4b0d      	ldr	r3, [pc, #52]	; (84d8 <Reset_Handler+0xf4>)
+    84a4:	4798      	blx	r3
+
+        /* Infinite loop */
+        while (1);
+    84a6:	e7fe      	b.n	84a6 <Reset_Handler+0xc2>
+    84a8:	00008770 	.word	0x00008770
+    84ac:	20000000 	.word	0x20000000
+    84b0:	20000004 	.word	0x20000004
+    84b4:	20000004 	.word	0x20000004
+    84b8:	20000038 	.word	0x20000038
+    84bc:	00008000 	.word	0x00008000
+    84c0:	e000ed00 	.word	0xe000ed00
+    84c4:	41007000 	.word	0x41007000
+    84c8:	41005000 	.word	0x41005000
+    84cc:	41004800 	.word	0x41004800
+    84d0:	41004000 	.word	0x41004000
+    84d4:	00008705 	.word	0x00008705
+    84d8:	0000869d 	.word	0x0000869d
+
+000084dc <Dummy_Handler>:
+
+/**
+ * \brief Default interrupt handler for unused IRQs.
+ */
+void Dummy_Handler(void)
+{
+    84dc:	b580      	push	{r7, lr}
+    84de:	af00      	add	r7, sp, #0
+        while (1) {
+        }
+    84e0:	e7fe      	b.n	84e0 <Dummy_Handler+0x4>
+    84e2:	46c0      	nop			; (mov r8, r8)
+
+000084e4 <system_pinmux_get_group_from_gpio_pin>:
+ *
+ * \return Base address of the associated PORT module.
+ */
+static inline PortGroup* system_pinmux_get_group_from_gpio_pin(
+		const uint8_t gpio_pin)
+{
+    84e4:	b580      	push	{r7, lr}
+    84e6:	b084      	sub	sp, #16
+    84e8:	af00      	add	r7, sp, #0
+    84ea:	0002      	movs	r2, r0
+    84ec:	1dfb      	adds	r3, r7, #7
+    84ee:	701a      	strb	r2, [r3, #0]
+	uint8_t port_index  = (gpio_pin / 128);
+    84f0:	230f      	movs	r3, #15
+    84f2:	18fb      	adds	r3, r7, r3
+    84f4:	1dfa      	adds	r2, r7, #7
+    84f6:	7812      	ldrb	r2, [r2, #0]
+    84f8:	09d2      	lsrs	r2, r2, #7
+    84fa:	701a      	strb	r2, [r3, #0]
+	uint8_t group_index = (gpio_pin / 32);
+    84fc:	230e      	movs	r3, #14
+    84fe:	18fb      	adds	r3, r7, r3
+    8500:	1dfa      	adds	r2, r7, #7
+    8502:	7812      	ldrb	r2, [r2, #0]
+    8504:	0952      	lsrs	r2, r2, #5
+    8506:	701a      	strb	r2, [r3, #0]
+
+	/* Array of available ports */
+	Port *const ports[PORT_INST_NUM] = PORT_INSTS;
+    8508:	4b0d      	ldr	r3, [pc, #52]	; (8540 <system_pinmux_get_group_from_gpio_pin+0x5c>)
+    850a:	60bb      	str	r3, [r7, #8]
+
+	if (port_index < PORT_INST_NUM) {
+    850c:	230f      	movs	r3, #15
+    850e:	18fb      	adds	r3, r7, r3
+    8510:	781b      	ldrb	r3, [r3, #0]
+    8512:	2b00      	cmp	r3, #0
+    8514:	d10f      	bne.n	8536 <system_pinmux_get_group_from_gpio_pin+0x52>
+		return &(ports[port_index]->Group[group_index]);
+    8516:	230f      	movs	r3, #15
+    8518:	18fb      	adds	r3, r7, r3
+    851a:	781b      	ldrb	r3, [r3, #0]
+    851c:	009b      	lsls	r3, r3, #2
+    851e:	2210      	movs	r2, #16
+    8520:	4694      	mov	ip, r2
+    8522:	44bc      	add	ip, r7
+    8524:	4463      	add	r3, ip
+    8526:	3b08      	subs	r3, #8
+    8528:	681a      	ldr	r2, [r3, #0]
+    852a:	230e      	movs	r3, #14
+    852c:	18fb      	adds	r3, r7, r3
+    852e:	781b      	ldrb	r3, [r3, #0]
+    8530:	01db      	lsls	r3, r3, #7
+    8532:	18d3      	adds	r3, r2, r3
+    8534:	e000      	b.n	8538 <system_pinmux_get_group_from_gpio_pin+0x54>
+	} else {
+		Assert(false);
+		return NULL;
+    8536:	2300      	movs	r3, #0
+	}
+}
+    8538:	0018      	movs	r0, r3
+    853a:	46bd      	mov	sp, r7
+    853c:	b004      	add	sp, #16
+    853e:	bd80      	pop	{r7, pc}
+    8540:	41004400 	.word	0x41004400
+
+00008544 <port_get_group_from_gpio_pin>:
+ *
+ *  \return Base address of the associated PORT module.
+ */
+static inline PortGroup* port_get_group_from_gpio_pin(
+		const uint8_t gpio_pin)
+{
+    8544:	b580      	push	{r7, lr}
+    8546:	b082      	sub	sp, #8
+    8548:	af00      	add	r7, sp, #0
+    854a:	0002      	movs	r2, r0
+    854c:	1dfb      	adds	r3, r7, #7
+    854e:	701a      	strb	r2, [r3, #0]
+	return system_pinmux_get_group_from_gpio_pin(gpio_pin);
+    8550:	1dfb      	adds	r3, r7, #7
+    8552:	781b      	ldrb	r3, [r3, #0]
+    8554:	0018      	movs	r0, r3
+    8556:	4b03      	ldr	r3, [pc, #12]	; (8564 <port_get_group_from_gpio_pin+0x20>)
+    8558:	4798      	blx	r3
+    855a:	0003      	movs	r3, r0
+}
+    855c:	0018      	movs	r0, r3
+    855e:	46bd      	mov	sp, r7
+    8560:	b002      	add	sp, #8
+    8562:	bd80      	pop	{r7, pc}
+    8564:	000084e5 	.word	0x000084e5
+
+00008568 <port_get_config_defaults>:
+ *
+ *  \param[out] config  Configuration structure to initialize to default values
+ */
+static inline void port_get_config_defaults(
+		struct port_config *const config)
+{
+    8568:	b580      	push	{r7, lr}
+    856a:	b082      	sub	sp, #8
+    856c:	af00      	add	r7, sp, #0
+    856e:	6078      	str	r0, [r7, #4]
+	/* Sanity check arguments */
+	Assert(config);
+
+	/* Default configuration values */
+	config->direction  = PORT_PIN_DIR_INPUT;
+    8570:	687b      	ldr	r3, [r7, #4]
+    8572:	2200      	movs	r2, #0
+    8574:	701a      	strb	r2, [r3, #0]
+	config->input_pull = PORT_PIN_PULL_UP;
+    8576:	687b      	ldr	r3, [r7, #4]
+    8578:	2201      	movs	r2, #1
+    857a:	705a      	strb	r2, [r3, #1]
+	config->powersave  = false;
+    857c:	687b      	ldr	r3, [r7, #4]
+    857e:	2200      	movs	r2, #0
+    8580:	709a      	strb	r2, [r3, #2]
+}
+    8582:	46c0      	nop			; (mov r8, r8)
+    8584:	46bd      	mov	sp, r7
+    8586:	b002      	add	sp, #8
+    8588:	bd80      	pop	{r7, pc}
+    858a:	46c0      	nop			; (mov r8, r8)
+
+0000858c <port_pin_get_input_level>:
+ *
+ *  \return Status of the port pin's input buffer.
+ */
+static inline bool port_pin_get_input_level(
+		const uint8_t gpio_pin)
+{
+    858c:	b580      	push	{r7, lr}
+    858e:	b084      	sub	sp, #16
+    8590:	af00      	add	r7, sp, #0
+    8592:	0002      	movs	r2, r0
+    8594:	1dfb      	adds	r3, r7, #7
+    8596:	701a      	strb	r2, [r3, #0]
+	PortGroup *const port_base = port_get_group_from_gpio_pin(gpio_pin);
+    8598:	1dfb      	adds	r3, r7, #7
+    859a:	781b      	ldrb	r3, [r3, #0]
+    859c:	0018      	movs	r0, r3
+    859e:	4b0b      	ldr	r3, [pc, #44]	; (85cc <port_pin_get_input_level+0x40>)
+    85a0:	4798      	blx	r3
+    85a2:	0003      	movs	r3, r0
+    85a4:	60fb      	str	r3, [r7, #12]
+	uint32_t pin_mask  = (1UL << (gpio_pin % 32));
+    85a6:	1dfb      	adds	r3, r7, #7
+    85a8:	781b      	ldrb	r3, [r3, #0]
+    85aa:	221f      	movs	r2, #31
+    85ac:	4013      	ands	r3, r2
+    85ae:	2201      	movs	r2, #1
+    85b0:	409a      	lsls	r2, r3
+    85b2:	0013      	movs	r3, r2
+    85b4:	60bb      	str	r3, [r7, #8]
+
+	return (port_base->IN.reg & pin_mask);
+    85b6:	68fb      	ldr	r3, [r7, #12]
+    85b8:	6a1b      	ldr	r3, [r3, #32]
+    85ba:	68ba      	ldr	r2, [r7, #8]
+    85bc:	4013      	ands	r3, r2
+    85be:	1e5a      	subs	r2, r3, #1
+    85c0:	4193      	sbcs	r3, r2
+    85c2:	b2db      	uxtb	r3, r3
+}
+    85c4:	0018      	movs	r0, r3
+    85c6:	46bd      	mov	sp, r7
+    85c8:	b004      	add	sp, #16
+    85ca:	bd80      	pop	{r7, pc}
+    85cc:	00008545 	.word	0x00008545
+
+000085d0 <port_pin_set_output_level>:
+ *  \param[in] level     Logical level to set the given pin to
+ */
+static inline void port_pin_set_output_level(
+		const uint8_t gpio_pin,
+		const bool level)
+{
+    85d0:	b580      	push	{r7, lr}
+    85d2:	b084      	sub	sp, #16
+    85d4:	af00      	add	r7, sp, #0
+    85d6:	0002      	movs	r2, r0
+    85d8:	1dfb      	adds	r3, r7, #7
+    85da:	701a      	strb	r2, [r3, #0]
+    85dc:	1dbb      	adds	r3, r7, #6
+    85de:	1c0a      	adds	r2, r1, #0
+    85e0:	701a      	strb	r2, [r3, #0]
+	PortGroup *const port_base = port_get_group_from_gpio_pin(gpio_pin);
+    85e2:	1dfb      	adds	r3, r7, #7
+    85e4:	781b      	ldrb	r3, [r3, #0]
+    85e6:	0018      	movs	r0, r3
+    85e8:	4b0d      	ldr	r3, [pc, #52]	; (8620 <port_pin_set_output_level+0x50>)
+    85ea:	4798      	blx	r3
+    85ec:	0003      	movs	r3, r0
+    85ee:	60fb      	str	r3, [r7, #12]
+	uint32_t pin_mask  = (1UL << (gpio_pin % 32));
+    85f0:	1dfb      	adds	r3, r7, #7
+    85f2:	781b      	ldrb	r3, [r3, #0]
+    85f4:	221f      	movs	r2, #31
+    85f6:	4013      	ands	r3, r2
+    85f8:	2201      	movs	r2, #1
+    85fa:	409a      	lsls	r2, r3
+    85fc:	0013      	movs	r3, r2
+    85fe:	60bb      	str	r3, [r7, #8]
+
+	/* Set the pin to high or low atomically based on the requested level */
+	if (level) {
+    8600:	1dbb      	adds	r3, r7, #6
+    8602:	781b      	ldrb	r3, [r3, #0]
+    8604:	2b00      	cmp	r3, #0
+    8606:	d003      	beq.n	8610 <port_pin_set_output_level+0x40>
+		port_base->OUTSET.reg = pin_mask;
+    8608:	68fb      	ldr	r3, [r7, #12]
+    860a:	68ba      	ldr	r2, [r7, #8]
+    860c:	619a      	str	r2, [r3, #24]
+	} else {
+		port_base->OUTCLR.reg = pin_mask;
+	}
+}
+    860e:	e002      	b.n	8616 <port_pin_set_output_level+0x46>
+
+	/* Set the pin to high or low atomically based on the requested level */
+	if (level) {
+		port_base->OUTSET.reg = pin_mask;
+	} else {
+		port_base->OUTCLR.reg = pin_mask;
+    8610:	68fb      	ldr	r3, [r7, #12]
+    8612:	68ba      	ldr	r2, [r7, #8]
+    8614:	615a      	str	r2, [r3, #20]
+	}
+}
+    8616:	46c0      	nop			; (mov r8, r8)
+    8618:	46bd      	mov	sp, r7
+    861a:	b004      	add	sp, #16
+    861c:	bd80      	pop	{r7, pc}
+    861e:	46c0      	nop			; (mov r8, r8)
+    8620:	00008545 	.word	0x00008545
+
+00008624 <system_interrupt_enable_global>:
+ * \brief Enables global interrupts.
+ *
+ * Enables global interrupts in the device to fire any enabled interrupt handlers.
+ */
+static inline void system_interrupt_enable_global(void)
+{
+    8624:	b580      	push	{r7, lr}
+    8626:	af00      	add	r7, sp, #0
+	cpu_irq_enable();
+    8628:	4b04      	ldr	r3, [pc, #16]	; (863c <system_interrupt_enable_global+0x18>)
+    862a:	2201      	movs	r2, #1
+    862c:	701a      	strb	r2, [r3, #0]
+    This function ensures the apparent order of the explicit memory operations before
+    and after the instruction, without ensuring their completion.
+ */
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __DMB(void)
+{
+  __ASM volatile ("dmb");
+    862e:	f3bf 8f5f 	dmb	sy
+  This function enables IRQ interrupts by clearing the I-bit in the CPSR.
+  Can only be executed in Privileged modes.
+ */
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
+{
+  __ASM volatile ("cpsie i" : : : "memory");
+    8632:	b662      	cpsie	i
+}
+    8634:	46c0      	nop			; (mov r8, r8)
+    8636:	46bd      	mov	sp, r7
+    8638:	bd80      	pop	{r7, pc}
+    863a:	46c0      	nop			; (mov r8, r8)
+    863c:	20000000 	.word	0x20000000
+
+00008640 <configure_port_pins>:
+	//write status bits to NVMEM
+
+}
+
+void configure_port_pins(void)
+{
+    8640:	b580      	push	{r7, lr}
+    8642:	b082      	sub	sp, #8
+    8644:	af00      	add	r7, sp, #0
+	struct port_config config_port_pin;
+	port_get_config_defaults(&config_port_pin);
+    8646:	1d3b      	adds	r3, r7, #4
+    8648:	0018      	movs	r0, r3
+    864a:	4b12      	ldr	r3, [pc, #72]	; (8694 <configure_port_pins+0x54>)
+    864c:	4798      	blx	r3
+	config_port_pin.direction = PORT_PIN_DIR_OUTPUT;
+    864e:	1d3b      	adds	r3, r7, #4
+    8650:	2201      	movs	r2, #1
+    8652:	701a      	strb	r2, [r3, #0]
+	port_pin_set_config(LED_0_PIN, &config_port_pin);
+    8654:	1d3b      	adds	r3, r7, #4
+    8656:	0019      	movs	r1, r3
+    8658:	202b      	movs	r0, #43	; 0x2b
+    865a:	4b0f      	ldr	r3, [pc, #60]	; (8698 <configure_port_pins+0x58>)
+    865c:	4798      	blx	r3
+	port_pin_set_config(LED_1_PIN, &config_port_pin);
+    865e:	1d3b      	adds	r3, r7, #4
+    8660:	0019      	movs	r1, r3
+    8662:	202a      	movs	r0, #42	; 0x2a
+    8664:	4b0c      	ldr	r3, [pc, #48]	; (8698 <configure_port_pins+0x58>)
+    8666:	4798      	blx	r3
+	port_pin_set_config(RELAY, &config_port_pin);
+    8668:	1d3b      	adds	r3, r7, #4
+    866a:	0019      	movs	r1, r3
+    866c:	2005      	movs	r0, #5
+    866e:	4b0a      	ldr	r3, [pc, #40]	; (8698 <configure_port_pins+0x58>)
+    8670:	4798      	blx	r3
+	config_port_pin.direction = PORT_PIN_DIR_INPUT;
+    8672:	1d3b      	adds	r3, r7, #4
+    8674:	2200      	movs	r2, #0
+    8676:	701a      	strb	r2, [r3, #0]
+	port_pin_set_config(B1, &config_port_pin);
+    8678:	1d3b      	adds	r3, r7, #4
+    867a:	0019      	movs	r1, r3
+    867c:	2006      	movs	r0, #6
+    867e:	4b06      	ldr	r3, [pc, #24]	; (8698 <configure_port_pins+0x58>)
+    8680:	4798      	blx	r3
+	port_pin_set_config(FL0, &config_port_pin);
+    8682:	1d3b      	adds	r3, r7, #4
+    8684:	0019      	movs	r1, r3
+    8686:	2036      	movs	r0, #54	; 0x36
+    8688:	4b03      	ldr	r3, [pc, #12]	; (8698 <configure_port_pins+0x58>)
+    868a:	4798      	blx	r3
+}
+    868c:	46c0      	nop			; (mov r8, r8)
+    868e:	46bd      	mov	sp, r7
+    8690:	b002      	add	sp, #8
+    8692:	bd80      	pop	{r7, pc}
+    8694:	00008569 	.word	0x00008569
+    8698:	000081cd 	.word	0x000081cd
+
+0000869c <main>:
+
+int main (void)
+{
+    869c:	b580      	push	{r7, lr}
+    869e:	af00      	add	r7, sp, #0
+	//system_init();
+	configure_port_pins();
+    86a0:	4b14      	ldr	r3, [pc, #80]	; (86f4 <main+0x58>)
+    86a2:	4798      	blx	r3
+	system_interrupt_enable_global();
+    86a4:	4b14      	ldr	r3, [pc, #80]	; (86f8 <main+0x5c>)
+    86a6:	4798      	blx	r3
+	//delay_init();
+	//configure_console();
+	//printf("App started\n");
+	while (1) {
+		if (port_pin_get_input_level(B1)) {
+    86a8:	2006      	movs	r0, #6
+    86aa:	4b14      	ldr	r3, [pc, #80]	; (86fc <main+0x60>)
+    86ac:	4798      	blx	r3
+    86ae:	1e03      	subs	r3, r0, #0
+    86b0:	d008      	beq.n	86c4 <main+0x28>
+			port_pin_set_output_level(LED_0_PIN, false);
+    86b2:	2100      	movs	r1, #0
+    86b4:	202b      	movs	r0, #43	; 0x2b
+    86b6:	4b12      	ldr	r3, [pc, #72]	; (8700 <main+0x64>)
+    86b8:	4798      	blx	r3
+			port_pin_set_output_level(RELAY, false);
+    86ba:	2100      	movs	r1, #0
+    86bc:	2005      	movs	r0, #5
+    86be:	4b10      	ldr	r3, [pc, #64]	; (8700 <main+0x64>)
+    86c0:	4798      	blx	r3
+    86c2:	e007      	b.n	86d4 <main+0x38>
+		}
+		else {
+			port_pin_set_output_level(LED_0_PIN, true);
+    86c4:	2101      	movs	r1, #1
+    86c6:	202b      	movs	r0, #43	; 0x2b
+    86c8:	4b0d      	ldr	r3, [pc, #52]	; (8700 <main+0x64>)
+    86ca:	4798      	blx	r3
+			port_pin_set_output_level(RELAY, true);
+    86cc:	2101      	movs	r1, #1
+    86ce:	2005      	movs	r0, #5
+    86d0:	4b0b      	ldr	r3, [pc, #44]	; (8700 <main+0x64>)
+    86d2:	4798      	blx	r3
+		}
+		if (port_pin_get_input_level(FL0)) {
+    86d4:	2036      	movs	r0, #54	; 0x36
+    86d6:	4b09      	ldr	r3, [pc, #36]	; (86fc <main+0x60>)
+    86d8:	4798      	blx	r3
+    86da:	1e03      	subs	r3, r0, #0
+    86dc:	d004      	beq.n	86e8 <main+0x4c>
+			port_pin_set_output_level(LED_1_PIN, false);
+    86de:	2100      	movs	r1, #0
+    86e0:	202a      	movs	r0, #42	; 0x2a
+    86e2:	4b07      	ldr	r3, [pc, #28]	; (8700 <main+0x64>)
+    86e4:	4798      	blx	r3
+    86e6:	e7df      	b.n	86a8 <main+0xc>
+		}
+		else {
+			port_pin_set_output_level(LED_1_PIN, true);
+    86e8:	2101      	movs	r1, #1
+    86ea:	202a      	movs	r0, #42	; 0x2a
+    86ec:	4b04      	ldr	r3, [pc, #16]	; (8700 <main+0x64>)
+    86ee:	4798      	blx	r3
+		}
+	}	
+    86f0:	e7da      	b.n	86a8 <main+0xc>
+    86f2:	46c0      	nop			; (mov r8, r8)
+    86f4:	00008641 	.word	0x00008641
+    86f8:	00008625 	.word	0x00008625
+    86fc:	0000858d 	.word	0x0000858d
+    8700:	000085d1 	.word	0x000085d1
+
+00008704 <__libc_init_array>:
+    8704:	4b0e      	ldr	r3, [pc, #56]	; (8740 <__libc_init_array+0x3c>)
+    8706:	b570      	push	{r4, r5, r6, lr}
+    8708:	2500      	movs	r5, #0
+    870a:	001e      	movs	r6, r3
+    870c:	4c0d      	ldr	r4, [pc, #52]	; (8744 <__libc_init_array+0x40>)
+    870e:	1ae4      	subs	r4, r4, r3
+    8710:	10a4      	asrs	r4, r4, #2
+    8712:	42a5      	cmp	r5, r4
+    8714:	d004      	beq.n	8720 <__libc_init_array+0x1c>
+    8716:	00ab      	lsls	r3, r5, #2
+    8718:	58f3      	ldr	r3, [r6, r3]
+    871a:	4798      	blx	r3
+    871c:	3501      	adds	r5, #1
+    871e:	e7f8      	b.n	8712 <__libc_init_array+0xe>
+    8720:	f000 f816 	bl	8750 <_init>
+    8724:	4b08      	ldr	r3, [pc, #32]	; (8748 <__libc_init_array+0x44>)
+    8726:	2500      	movs	r5, #0
+    8728:	001e      	movs	r6, r3
+    872a:	4c08      	ldr	r4, [pc, #32]	; (874c <__libc_init_array+0x48>)
+    872c:	1ae4      	subs	r4, r4, r3
+    872e:	10a4      	asrs	r4, r4, #2
+    8730:	42a5      	cmp	r5, r4
+    8732:	d004      	beq.n	873e <__libc_init_array+0x3a>
+    8734:	00ab      	lsls	r3, r5, #2
+    8736:	58f3      	ldr	r3, [r6, r3]
+    8738:	4798      	blx	r3
+    873a:	3501      	adds	r5, #1
+    873c:	e7f8      	b.n	8730 <__libc_init_array+0x2c>
+    873e:	bd70      	pop	{r4, r5, r6, pc}
+    8740:	0000875c 	.word	0x0000875c
+    8744:	0000875c 	.word	0x0000875c
+    8748:	0000875c 	.word	0x0000875c
+    874c:	00008760 	.word	0x00008760
+
+00008750 <_init>:
+    8750:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+    8752:	46c0      	nop			; (mov r8, r8)
+    8754:	bcf8      	pop	{r3, r4, r5, r6, r7}
+    8756:	bc08      	pop	{r3}
+    8758:	469e      	mov	lr, r3
+    875a:	4770      	bx	lr
+
+0000875c <__init_array_start>:
+    875c:	000080dd 	.word	0x000080dd
+
+00008760 <_fini>:
+    8760:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+    8762:	46c0      	nop			; (mov r8, r8)
+    8764:	bcf8      	pop	{r3, r4, r5, r6, r7}
+    8766:	bc08      	pop	{r3}
+    8768:	469e      	mov	lr, r3
+    876a:	4770      	bx	lr
+
+0000876c <__fini_array_start>:
+    876c:	000080b5 	.word	0x000080b5
