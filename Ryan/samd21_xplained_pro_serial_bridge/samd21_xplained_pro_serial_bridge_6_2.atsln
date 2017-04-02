@@ -1,0 +1,20 @@
+
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "samd21_xplained_pro_serial_bridge", "samd21_xplained_pro_serial_bridge\samd21_xplained_pro_serial_bridge_6_2.cproj", "{464115A4-8518-486F-A8E6-1A92AC2A1A16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Release|ARM = Release|ARM
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{464115A4-8518-486F-A8E6-1A92AC2A1A16}.Debug|ARM.ActiveCfg = Debug|ARM
+		{464115A4-8518-486F-A8E6-1A92AC2A1A16}.Debug|ARM.Build.0 = Debug|ARM
+		{464115A4-8518-486F-A8E6-1A92AC2A1A16}.Release|ARM.ActiveCfg = Release|ARM
+		{464115A4-8518-486F-A8E6-1A92AC2A1A16}.Release|ARM.Build.0 = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
