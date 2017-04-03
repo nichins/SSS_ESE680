@@ -14,14 +14,6 @@ src\ASF\sam0\drivers\sercom\usart\usart.c
 
 src\ASF\sam0\drivers\sercom\usart\usart_interrupt.c
 
-src\ASF\sam0\drivers\pac\pac_sam_d_r_h\pac.c
-
-src\ASF\sam0\drivers\tc\tc_sam_d_r_h\tc.c
-
-src\ASF\sam0\drivers\tc\tc_interrupt.c
-
-src\ASF\sam0\drivers\sercom\spi_master_vec\spi_master_vec.c
-
 src\ASF\sam0\drivers\sercom\sercom.c
 
 src\ASF\sam0\drivers\sercom\spi\spi.c
