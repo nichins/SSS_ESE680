@@ -68,6 +68,9 @@
 // From module: Interrupt management - SAM implementation
 #include <interrupt.h>
 
+// From module: PAC - Peripheral Access Controller
+#include <pac.h>
+
 // From module: PORT - GPIO Pin Control
 #include <port.h>
 
@@ -81,6 +84,9 @@
 // From module: SERCOM SPI - Serial Peripheral Interface (Callback APIs)
 #include <spi.h>
 #include <spi_interrupt.h>
+
+// From module: SERCOM SPI - Serial Peripheral Interface (Master Mode, Vectored I/O)
+#include <spi_master_vec.h>
 
 // From module: SERCOM USART - Serial Communications (Callback APIs)
 #include <usart.h>
@@ -107,6 +113,10 @@
 
 // From module: Standard serial I/O (stdio)
 #include <stdio_serial.h>
+
+// From module: TC - Timer Counter (Callback APIs)
+#include <tc.h>
+#include <tc_interrupt.h>
 
 // From module: USART - Serial interface- SAM implementation for devices with only USART
 #include <serial.h>
