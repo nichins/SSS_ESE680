@@ -35,6 +35,7 @@ typedef struct
 	uint8_t executing_image;	//firmware version for executing image
 	uint8_t downloaded_image;	//firmware version for downloaded image 
 	uint8_t writenew_image;		//boolean flag to upgrade the firmware
+	uint8_t reset_count;		// Reset counter for app recovery
 }Firmware_Status_t;
 
 struct usart_module usart_instance;
@@ -113,6 +114,7 @@ static void writeFWStat(Firmware_Status_t thisFW)
 	page_buffer[4] = thisFW.executing_image;
 	page_buffer[5] = thisFW.downloaded_image;
 	page_buffer[6] = thisFW.writenew_image;
+	page_buffer[7] = thisFW.reset_count;
 	
 	status_code_genare_t error_code;
 	do
@@ -149,7 +151,7 @@ static void upgradeFW(Firmware_Status_t thisFW)
 	//read the firmware out and start burning NVM
 	uint32_t addr_i = 0;
 	status_code_genare_t error_code;
-	while (APP_START_ADDRESS + addr_i < 40000) {	
+	while (APP_START_ADDRESS + addr_i < 0x40000) {	
 		// write a row to NVM (256B)
 		do
 		{
@@ -157,10 +159,12 @@ static void upgradeFW(Firmware_Status_t thisFW)
 		} while (error_code == STATUS_BUSY);
 		for (int i = 0; i < 4; i++) {
 			// Read 64B of flash
-			at25dfx_chip_read_buffer(&at25dfx_chip, flash_fw_addr + addr_i + i*NVMCTRL_PAGE_SIZE, read_buffer, NVMCTRL_PAGE_SIZE);
+			uint32_t thisFlashAddr = flash_fw_addr + addr_i + i*NVMCTRL_PAGE_SIZE;
+			at25dfx_chip_read_buffer(&at25dfx_chip, thisFlashAddr, read_buffer, NVMCTRL_PAGE_SIZE);
+			uint32_t thisNVMAddr = APP_START_ADDRESS + addr_i + i*NVMCTRL_PAGE_SIZE;
 			do
 			{
-				error_code = nvm_write_buffer(APP_START_ADDRESS + addr_i, read_buffer, NVMCTRL_PAGE_SIZE);	// Write 64B to NVM page
+				error_code = nvm_write_buffer(thisNVMAddr, read_buffer, NVMCTRL_PAGE_SIZE);	// Write 64B to NVM page
 			} while (error_code == STATUS_BUSY);
 		}
 		
@@ -201,11 +205,10 @@ static void writeFWtoFlash(uint8_t slot)
 	at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_fw_addr + 0x10000, false);				// unprotect sector
 	at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_fw_addr + 0x20000, false);				// unprotect sector
 	at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_fw_addr + 0x30000, false);				// unprotect sector
-	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr, AT25DFX_BLOCK_SIZE_4KB);				// erase block 0
-	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x10000, AT25DFX_BLOCK_SIZE_4KB);	// erase block 1
-	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x20000, AT25DFX_BLOCK_SIZE_4KB);	// erase block 2
-	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x30000, AT25DFX_BLOCK_SIZE_4KB);	// erase block 3
-	
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr, AT25DFX_BLOCK_SIZE_64KB);				// erase block 0
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x10000, AT25DFX_BLOCK_SIZE_64KB);	// erase block 1
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x20000, AT25DFX_BLOCK_SIZE_64KB);	// erase block 2
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_fw_addr + 0x30000, AT25DFX_BLOCK_SIZE_64KB);	// erase block 3
 	while (addr_i < 0x38000) {
 		// Read a page of NVM (64B)
 		do
@@ -269,7 +272,7 @@ int main (void)
 	
 	// Test - write NVM app space to flash
 	//init_drivers();
-	//writeFWtoFlash(1);
+	//writeFWtoFlash(0);
 	
 
 	void (*app_code_entry)(void);
@@ -290,7 +293,7 @@ int main (void)
 		{
 			// check for firmware download requested
 			Firmware_Status_t thisFW = getFWStat();
-			//thisFW.downloaded_image = 1;
+			//thisFW.downloaded_image = 0;
 			//thisFW.writenew_image = 1;
 			if(thisFW.writenew_image)
 			{
@@ -303,6 +306,23 @@ int main (void)
 
 			// jump to reset handler
 			app_code_entry =  (void(*)(void))(*(uint32_t*)(APP_START_ADDRESS+4));
+			if (app_code_entry == 0x0) {		// Empty app space
+				init_drivers();
+				thisFW.downloaded_image = 0;
+				thisFW.writenew_image = 1;
+				upgradeFW(thisFW);
+			}
+			if (system_get_reset_cause() == SYSTEM_RESET_CAUSE_WDT) {
+				thisFW.reset_count += 1;
+				writeFWStat(thisFW);
+				if (thisFW.reset_count > 10) {
+					thisFW.reset_count = 0;
+					init_drivers();
+					thisFW.downloaded_image = 0;
+					thisFW.writenew_image = 1;
+					upgradeFW(thisFW);
+				} 
+			}
 			app_code_entry();
 		}
 		

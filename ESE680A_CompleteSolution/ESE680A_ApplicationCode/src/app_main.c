@@ -173,7 +173,7 @@ int main (void)
 	//printf("app started\n");
 	while (1) 
 	{
-		if (port_pin_get_input_level(B1) == false) {
+		if (port_pin_get_input_level(B1) == true) {
 			port_pin_set_output_level(LED_0_PIN, false);
 		}
 		else 
