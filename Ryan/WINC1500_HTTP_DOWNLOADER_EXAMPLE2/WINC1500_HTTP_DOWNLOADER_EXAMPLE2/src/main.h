@@ -46,15 +46,15 @@ extern "C" {
 #endif
 
 /** Wi-Fi AP Settings. */
-#define MAIN_WLAN_SSID                       "SSID" /**< Destination SSID */
+#define MAIN_WLAN_SSID                       "B'loreGrads-2.4" /**< Destination SSID */
 #define MAIN_WLAN_AUTH                       M2M_WIFI_SEC_WPA_PSK /**< Security manner */
-#define MAIN_WLAN_PSK                        "password" /**< Password for Destination SSID */
+#define MAIN_WLAN_PSK                        "mastersindia" /**< Password for Destination SSID */
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
 
 /** Content URI for download. */
-#define MAIN_HTTP_FILE_URL                   "http://www.atmel.com/Images/Atmel-45154-Product-Selection-Guide_Brochure.pdf"
+#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/test.txt"
 
 /** Maximum size for packet buffer. */
 #define MAIN_BUFFER_MAX_SIZE                 (1024)
