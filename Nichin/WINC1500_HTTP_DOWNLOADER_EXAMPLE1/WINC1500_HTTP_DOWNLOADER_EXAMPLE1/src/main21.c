@@ -128,7 +128,7 @@
 	"-- "BOARD_NAME " --"STRING_EOL	\
 	"-- Compiled: "__DATE__ " "__TIME__ " --"STRING_EOL
 
-#define AT25DFX_BUFFER_SIZE  (10)
+#define AT25DFX_BUFFER_SIZE  (256)
 #define AT25DFX_CLOCK_SPEED				120000
 #define AT25DFX_SPI_PINMUX_SETTING		SPI_SIGNAL_MUX_SETTING_E
 #define AT25DFX_SPI_PINMUX_PAD0			PINMUX_PA16C_SERCOM1_PAD0
@@ -143,7 +143,10 @@ static uint8_t read_buffer[AT25DFX_BUFFER_SIZE];
 struct spi_module at25dfx_spi;
 struct at25dfx_chip_module at25dfx_chip;
 
-uint32_t flash_addr = 0x10000;
+uint32_t flash_addr = 0x00000;
+uint8_t http_buf [2048];
+uint32_t http_buf_write_ptr = 0x00000;
+uint32_t http_buf_read_ptr = 0x00000;
 
 /** File download processing state. */
 static download_state down_state = NOT_READY;
@@ -193,6 +196,24 @@ static inline bool is_state_set(download_state mask)
 {
 	return ((down_state & mask) != 0);
 }
+
+
+void write_spi_flash_frm_buf(uint32 len){
+	at25dfx_chip_wake(&at25dfx_chip);
+	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
+		// Handle missing or non-responsive device
+	}
+	
+	at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_addr, false);				// unprotect sector
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr, AT25DFX_BLOCK_SIZE_4KB);	// erase block
+	at25dfx_chip_write_buffer(&at25dfx_chip, flash_addr, http_buf + http_buf_read_ptr, len);	// write buffer
+	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, len);		// read same location
+	//at25dfx_chip_read_buffer(&at25dfx_chip, (flash_addr+0x0020), read_buffer, AT25DFX_BUFFER_SIZE);		// read same location
+	at25dfx_chip_set_global_sector_protect(&at25dfx_chip, true);				// protect sector
+	at25dfx_chip_sleep(&at25dfx_chip);											// back to sleep
+	flash_addr = flash_addr + len;
+}
+
 
 /**
  * \brief Start file download via HTTP connection.
@@ -258,17 +279,6 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 		if (data->recv_response.content_length <= MAIN_BUFFER_MAX_SIZE) {
 			//***store_file_packet(data->recv_response.content, data->recv_response.content_length);
 			
-			at25dfx_chip_wake(&at25dfx_chip);
-			if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
-				// Handle missing or non-responsive device
-			}
-			at25dfx_chip_set_sector_protect(&at25dfx_chip, 0x10000, false);				// unprotect sector
-			at25dfx_chip_erase_block(&at25dfx_chip, 0x10000, AT25DFX_BLOCK_SIZE_4KB);	// erase block
-			at25dfx_chip_write_buffer(&at25dfx_chip, 0x10000, data->recv_response.content, data->recv_response.content_length);	// write buffer
-			at25dfx_chip_read_buffer(&at25dfx_chip, 0x10FF6, read_buffer, AT25DFX_BUFFER_SIZE);		// read same location only first ten bytes
-			at25dfx_chip_set_global_sector_protect(&at25dfx_chip, true);				// protect sector
-			at25dfx_chip_sleep(&at25dfx_chip);											// back to sleep
-			
 			add_state(COMPLETED);
 		}
 		break;
@@ -277,22 +287,47 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 		printf("http_client_callback_CHUNKED DATA: received response data size %u\r\n",
 				(unsigned int)data->recv_chunked_data.length);
 		//***store_file_packet(data->recv_chunked_data.data, data->recv_chunked_data.length);
-		// NEED TO UPDATE THE ADDRESS LOCATION
-		at25dfx_chip_wake(&at25dfx_chip);
-		if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
-			// Handle missing or non-responsive device
+		if (http_buf_write_ptr + data->recv_chunked_data.length > 2048){
+			memcpy_ram2ram(http_buf + http_buf_write_ptr,data->recv_chunked_data.data,(2048-http_buf_write_ptr));
+			memcpy_ram2ram(http_buf, data->recv_chunked_data.data + (2048-http_buf_write_ptr), data->recv_chunked_data.length-(2048-http_buf_write_ptr));
+			http_buf_write_ptr = data->recv_chunked_data.length-(2048-http_buf_write_ptr);
 		}
-		at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_addr, false);				// unprotect sector
-		at25dfx_chip_erase_block(&at25dfx_chip, flash_addr, AT25DFX_BLOCK_SIZE_4KB);	// erase block
-		at25dfx_chip_write_buffer(&at25dfx_chip, flash_addr, data->recv_chunked_data.data, data->recv_chunked_data.length);	// write buffer
-		at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, AT25DFX_BUFFER_SIZE);		// read same location
-		at25dfx_chip_read_buffer(&at25dfx_chip, (flash_addr+0x0020), read_buffer, AT25DFX_BUFFER_SIZE);		// read same location
-		at25dfx_chip_set_global_sector_protect(&at25dfx_chip, true);				// protect sector
-		at25dfx_chip_sleep(&at25dfx_chip);											// back to sleep
-		flash_addr = flash_addr + (uint32_t)data->recv_chunked_data.length;
+		else {
+			memcpy_ram2ram(http_buf + http_buf_write_ptr, data->recv_chunked_data.data, data->recv_chunked_data.length);
+			http_buf_write_ptr = http_buf_write_ptr + data->recv_chunked_data.length;
+		}
+		 
+		if  (http_buf_write_ptr > http_buf_read_ptr){
+			uint8 n = (http_buf_write_ptr-http_buf_read_ptr) / 256;
+			for (int i=0 ; i<n ; i++ ){
+				write_spi_flash_frm_buf(256);
+				http_buf_read_ptr = http_buf_read_ptr + 256;
+			}
+		}
+		else if (http_buf_write_ptr < http_buf_read_ptr){
+			uint8 n = (2048 - http_buf_read_ptr) / 256;
+			for (int i=0 ; i<n ; i++ ){
+				write_spi_flash_frm_buf(256);
+				http_buf_read_ptr = http_buf_read_ptr + 256;
+			}
+			http_buf_read_ptr = 0;
+			n = (http_buf_write_ptr-http_buf_read_ptr) / 256;
+			for (int i=0 ; i<n ; i++ ){
+				write_spi_flash_frm_buf(256);
+				http_buf_read_ptr = http_buf_read_ptr + 256;
+			}
+		}
+		
 		
 		if (data->recv_chunked_data.is_complete) {
 			add_state(COMPLETED);
+			if  (http_buf_write_ptr < http_buf_read_ptr){
+				http_buf_read_ptr =0;
+				write_spi_flash_frm_buf(http_buf_write_ptr-http_buf_read_ptr);
+			}
+			else if(http_buf_write_ptr > http_buf_read_ptr){
+				write_spi_flash_frm_buf(http_buf_write_ptr-http_buf_read_ptr);
+			}
 		}
 
 		break;
@@ -321,6 +356,10 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 		break;
 	}
 }
+
+
+
+
 
 /**
  * \brief Callback to get the data from socket.

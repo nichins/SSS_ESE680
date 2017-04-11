@@ -36,6 +36,7 @@ SUBDIRS :=  \
 ../src/ \
 ../src/ASF/ \
 ../src/ASF/common2/ \
+../src/ASF/common2/components/ \
 ../src/ASF/common2/components/memory/ \
 ../src/ASF/common2/components/memory/serial_flash/ \
 ../src/ASF/common2/components/memory/serial_flash/at25dfx/ \
