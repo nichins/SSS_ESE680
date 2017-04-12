@@ -65,6 +65,10 @@
 // From module: Delay routines
 #include <delay.h>
 
+// From module: EXTINT - External Interrupt (Callback APIs)
+#include <extint.h>
+#include <extint_callback.h>
+
 // From module: Generic board support
 #include <board.h>
 
@@ -79,6 +83,11 @@
 
 // From module: Part identification macros
 #include <parts.h>
+
+// From module: RTC - Real Time Counter in Calendar Mode (Callback APIs)
+#include <rtc_calendar.h>
+#include <rtc_calendar_interrupt.h>
+#include <rtc_tamper.h>
 
 // From module: SERCOM Callback API
 #include <sercom.h>
@@ -116,6 +125,10 @@
 
 // From module: Standard serial I/O (stdio)
 #include <stdio_serial.h>
+
+// From module: TCC - Timer Counter for Control Applications (Callback APIs)
+#include <tcc.h>
+#include <tcc_callback.h>
 
 // From module: USART - Serial interface- SAM implementation for devices with only USART
 #include <serial.h>

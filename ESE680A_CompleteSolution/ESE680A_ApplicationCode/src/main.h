@@ -19,10 +19,10 @@ extern "C" {
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
 
 /** Content URI for download. */
-#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/test4kB.txt" 
+#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/test21kB.txt" 
 
 /** Maximum size for packet buffer. */
-#define MAIN_BUFFER_MAX_SIZE                 (2048)
+#define MAIN_BUFFER_MAX_SIZE                 (1024)
 /** Maximum file name length. */
 #define MAIN_MAX_FILE_NAME_LENGTH            (250)
 /** Maximum file extension length. */

@@ -153,6 +153,8 @@ src/ASF/common/components/wifi/winc1500/bus_wrapper/source/nm_bus_wrapper_samd21
  ../src/ASF/sam0/drivers/rtc/rtc_tamper.h \
  ../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h \
  ../src/ASF/sam0/drivers/sercom/spi/spi.h \
+ ../src/ASF/sam0/drivers/sercom/spi_master_vec/spi_master_vec.h \
+ ../src/config/conf_spi_master_vec.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart.h \
@@ -472,6 +474,10 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h:
 
 ../src/ASF/sam0/drivers/sercom/spi/spi.h:
+
+../src/ASF/sam0/drivers/sercom/spi_master_vec/spi_master_vec.h:
+
+../src/config/conf_spi_master_vec.h:
 
 ../src/ASF/sam0/drivers/sercom/usart/usart.h:
 

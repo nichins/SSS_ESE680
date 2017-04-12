@@ -3,13 +3,13 @@ WINC1500_HTTP_DOWNLOADER_EXAMPLE1.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000ac88  00000000  00000000  00010000  2**2
+  0 .text         0000ac90  00000000  00000000  00010000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .relocate     000001dc  20000000  0000ac88  00020000  2**2
+  1 .relocate     000001dc  20000000  0000ac90  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000d0c  200001dc  0000ae64  000201dc  2**2
+  2 .bss          00000d0c  200001dc  0000ae6c  000201dc  2**2
                   ALLOC
-  3 .stack        00002000  20000ee8  0000bb70  000201dc  2**0
+  3 .stack        00002000  20000ee8  0000bb78  000201dc  2**0
                   ALLOC
   4 .ARM.attributes 00000028  00000000  00000000  000201dc  2**0
                   CONTENTS, READONLY
@@ -29,9 +29,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_line   0001fa64  00000000  00000000  000d17f8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    000965a0  00000000  00000000  000f125c  2**0
+ 13 .debug_str    000965a7  00000000  00000000  000f125c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_frame  000036e8  00000000  00000000  001877fc  2**2
+ 14 .debug_frame  000036e8  00000000  00000000  00187804  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -111,7 +111,7 @@ void rtc_calendar_swap_time_mode(struct rtc_module *const module)
       d0:	200001dc 	.word	0x200001dc
       d4:	00000000 	.word	0x00000000
 			time.hour = 0;
-      d8:	0000ac88 	.word	0x0000ac88
+      d8:	0000ac90 	.word	0x0000ac90
 
 000000dc <frame_dummy>:
       dc:	4b08      	ldr	r3, [pc, #32]	; (100 <frame_dummy+0x24>)
@@ -139,8 +139,8 @@ void rtc_calendar_swap_time_mode(struct rtc_module *const module)
       fe:	e7f9      	b.n	f4 <frame_dummy+0x18>
      100:	00000000 	.word	0x00000000
      104:	200001e0 	.word	0x200001e0
-     108:	0000ac88 	.word	0x0000ac88
-     10c:	0000ac88 	.word	0x0000ac88
+     108:	0000ac90 	.word	0x0000ac90
+     10c:	0000ac90 	.word	0x0000ac90
      110:	00000000 	.word	0x00000000
 
 00000114 <at25dfx_chip_check_presence>:
@@ -17588,7 +17588,7 @@ void Dummy_Handler(void)
     6012:	4b0e      	ldr	r3, [pc, #56]	; (604c <Reset_Handler+0xe0>)
     6014:	4798      	blx	r3
     6016:	e7fe      	b.n	6016 <Reset_Handler+0xaa>
-    6018:	0000ac88 	.word	0x0000ac88
+    6018:	0000ac90 	.word	0x0000ac90
     601c:	20000000 	.word	0x20000000
     6020:	200001dc 	.word	0x200001dc
     6024:	20000004 	.word	0x20000004
@@ -21029,7 +21029,7 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
     743c:	9300      	str	r3, [sp, #0]
     743e:	4b17      	ldr	r3, [pc, #92]	; (749c <wifi_cb+0x9c>)
     7440:	2202      	movs	r2, #2
-    7442:	210b      	movs	r1, #11
+    7442:	2110      	movs	r1, #16
     7444:	4816      	ldr	r0, [pc, #88]	; (74a0 <wifi_cb+0xa0>)
     7446:	4c17      	ldr	r4, [pc, #92]	; (74a4 <wifi_cb+0xa4>)
     7448:	47a0      	blx	r4
@@ -21079,11 +21079,11 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
     7494:	000080f5 	.word	0x000080f5
     7498:	200002a4 	.word	0x200002a4
     749c:	0000aa84 	.word	0x0000aa84
-    74a0:	0000aa90 	.word	0x0000aa90
+    74a0:	0000aa94 	.word	0x0000aa94
     74a4:	00002079 	.word	0x00002079
     74a8:	0000aa44 	.word	0x0000aa44
     74ac:	00002095 	.word	0x00002095
-    74b0:	0000aa9c 	.word	0x0000aa9c
+    74b0:	0000aaa4 	.word	0x0000aaa4
     74b4:	00007fd9 	.word	0x00007fd9
     74b8:	00007355 	.word	0x00007355
 
@@ -21908,7 +21908,7 @@ static inline void stdio_serial_init(
     794e:	9300      	str	r3, [sp, #0]
     7950:	4b46      	ldr	r3, [pc, #280]	; (7a6c <main+0x30c>)
     7952:	2202      	movs	r2, #2
-    7954:	210b      	movs	r1, #11
+    7954:	2110      	movs	r1, #16
     7956:	0020      	movs	r0, r4
     7958:	4c45      	ldr	r4, [pc, #276]	; (7a70 <main+0x310>)
     795a:	47a0      	blx	r4
@@ -22016,7 +22016,7 @@ static inline void stdio_serial_init(
     7a58:	0000730d 	.word	0x0000730d
     7a5c:	00007349 	.word	0x00007349
     7a60:	00003919 	.word	0x00003919
-    7a64:	0000aa90 	.word	0x0000aa90
+    7a64:	0000aa94 	.word	0x0000aa94
     7a68:	0000a8fc 	.word	0x0000a8fc
     7a6c:	0000aa84 	.word	0x0000aa84
     7a70:	00002079 	.word	0x00002079
@@ -22468,7 +22468,7 @@ static inline void stdio_serial_init(
     7ddc:	42a6      	cmp	r6, r4
     7dde:	d109      	bne.n	7df4 <__libc_init_array+0x24>
     7de0:	2600      	movs	r6, #0
-    7de2:	f002 ff41 	bl	ac68 <_init>
+    7de2:	f002 ff45 	bl	ac70 <_init>
     7de6:	4d0a      	ldr	r5, [pc, #40]	; (7e10 <__libc_init_array+0x40>)
     7de8:	4c0a      	ldr	r4, [pc, #40]	; (7e14 <__libc_init_array+0x44>)
     7dea:	1b64      	subs	r4, r4, r5
@@ -22486,10 +22486,10 @@ static inline void stdio_serial_init(
     7e02:	4798      	blx	r3
     7e04:	3601      	adds	r6, #1
     7e06:	e7f2      	b.n	7dee <__libc_init_array+0x1e>
-    7e08:	0000ac74 	.word	0x0000ac74
-    7e0c:	0000ac74 	.word	0x0000ac74
-    7e10:	0000ac74 	.word	0x0000ac74
-    7e14:	0000ac78 	.word	0x0000ac78
+    7e08:	0000ac7c 	.word	0x0000ac7c
+    7e0c:	0000ac7c 	.word	0x0000ac7c
+    7e10:	0000ac7c 	.word	0x0000ac7c
+    7e14:	0000ac80 	.word	0x0000ac80
 
 00007e18 <malloc>:
     7e18:	b510      	push	{r4, lr}
@@ -22844,9 +22844,9 @@ static inline void stdio_serial_init(
     80e2:	6022      	str	r2, [r4, #0]
     80e4:	7018      	strb	r0, [r3, #0]
     80e6:	e7c8      	b.n	807a <_puts_r+0x46>
-    80e8:	0000aae8 	.word	0x0000aae8
-    80ec:	0000ab08 	.word	0x0000ab08
-    80f0:	0000aac8 	.word	0x0000aac8
+    80e8:	0000aaf0 	.word	0x0000aaf0
+    80ec:	0000ab10 	.word	0x0000ab10
+    80f0:	0000aad0 	.word	0x0000aad0
 
 000080f4 <puts>:
     80f4:	b510      	push	{r4, lr}
@@ -23043,10 +23043,10 @@ static inline void stdio_serial_init(
     8280:	4240      	negs	r0, r0
     8282:	e7bf      	b.n	8204 <setvbuf+0xc4>
     8284:	2000000c 	.word	0x2000000c
-    8288:	0000aae8 	.word	0x0000aae8
+    8288:	0000aaf0 	.word	0x0000aaf0
     828c:	fffff35c 	.word	0xfffff35c
-    8290:	0000ab08 	.word	0x0000ab08
-    8294:	0000aac8 	.word	0x0000aac8
+    8290:	0000ab10 	.word	0x0000ab10
+    8294:	0000aad0 	.word	0x0000aad0
 
 00008298 <siprintf>:
     8298:	b40e      	push	{r1, r2, r3}
@@ -23414,9 +23414,9 @@ static inline void stdio_serial_init(
     856a:	4276      	negs	r6, r6
     856c:	0030      	movs	r0, r6
     856e:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-    8570:	0000aae8 	.word	0x0000aae8
-    8574:	0000ab08 	.word	0x0000ab08
-    8578:	0000aac8 	.word	0x0000aac8
+    8570:	0000aaf0 	.word	0x0000aaf0
+    8574:	0000ab10 	.word	0x0000ab10
+    8578:	0000aad0 	.word	0x0000aad0
 
 0000857c <__swsetup_r>:
     857c:	4b36      	ldr	r3, [pc, #216]	; (8658 <__swsetup_r+0xdc>)
@@ -23527,9 +23527,9 @@ static inline void stdio_serial_init(
     8654:	60a3      	str	r3, [r4, #8]
     8656:	e7ed      	b.n	8634 <__swsetup_r+0xb8>
     8658:	2000000c 	.word	0x2000000c
-    865c:	0000aae8 	.word	0x0000aae8
-    8660:	0000ab08 	.word	0x0000ab08
-    8664:	0000aac8 	.word	0x0000aac8
+    865c:	0000aaf0 	.word	0x0000aaf0
+    8660:	0000ab10 	.word	0x0000ab10
+    8664:	0000aad0 	.word	0x0000aad0
 
 00008668 <__sflush_r>:
     8668:	b5f7      	push	{r0, r1, r2, r4, r5, r6, r7, lr}
@@ -23706,9 +23706,9 @@ static inline void stdio_serial_init(
     87c2:	d1ee      	bne.n	87a2 <_fflush_r+0x26>
     87c4:	68ec      	ldr	r4, [r5, #12]
     87c6:	e7ec      	b.n	87a2 <_fflush_r+0x26>
-    87c8:	0000aae8 	.word	0x0000aae8
-    87cc:	0000ab08 	.word	0x0000ab08
-    87d0:	0000aac8 	.word	0x0000aac8
+    87c8:	0000aaf0 	.word	0x0000aaf0
+    87cc:	0000ab10 	.word	0x0000ab10
+    87d0:	0000aad0 	.word	0x0000aad0
 
 000087d4 <_cleanup_r>:
     87d4:	b510      	push	{r4, lr}
@@ -23816,7 +23816,7 @@ static inline void stdio_serial_init(
     88b2:	61a3      	str	r3, [r4, #24]
     88b4:	bd13      	pop	{r0, r1, r4, pc}
     88b6:	46c0      	nop			; (mov r8, r8)
-    88b8:	0000aac4 	.word	0x0000aac4
+    88b8:	0000aacc 	.word	0x0000aacc
     88bc:	000087d5 	.word	0x000087d5
 
 000088c0 <__sfp>:
@@ -23879,7 +23879,7 @@ static inline void stdio_serial_init(
     8936:	64e5      	str	r5, [r4, #76]	; 0x4c
     8938:	e7e6      	b.n	8908 <__sfp+0x48>
     893a:	46c0      	nop			; (mov r8, r8)
-    893c:	0000aac4 	.word	0x0000aac4
+    893c:	0000aacc 	.word	0x0000aacc
 
 00008940 <_fwalk_reent>:
     8940:	b5f7      	push	{r0, r1, r2, r4, r5, r6, r7, lr}
@@ -24386,9 +24386,9 @@ static inline void stdio_serial_init(
     8d2c:	f000 f9be 	bl	90ac <_printf_i>
     8d30:	e7ea      	b.n	8d08 <_svfiprintf_r+0x1c8>
     8d32:	46c0      	nop			; (mov r8, r8)
-    8d34:	0000ab32 	.word	0x0000ab32
-    8d38:	0000ab38 	.word	0x0000ab38
-    8d3c:	0000ab3c 	.word	0x0000ab3c
+    8d34:	0000ab3a 	.word	0x0000ab3a
+    8d38:	0000ab40 	.word	0x0000ab40
+    8d3c:	0000ab44 	.word	0x0000ab44
     8d40:	00000000 	.word	0x00000000
     8d44:	00008a7d 	.word	0x00008a7d
 
@@ -24696,12 +24696,12 @@ static inline void stdio_serial_init(
     8fa8:	0030      	movs	r0, r6
     8faa:	f000 f87f 	bl	90ac <_printf_i>
     8fae:	e7ec      	b.n	8f8a <_vfiprintf_r+0x1f2>
-    8fb0:	0000aae8 	.word	0x0000aae8
-    8fb4:	0000ab32 	.word	0x0000ab32
-    8fb8:	0000ab08 	.word	0x0000ab08
-    8fbc:	0000aac8 	.word	0x0000aac8
-    8fc0:	0000ab38 	.word	0x0000ab38
-    8fc4:	0000ab3c 	.word	0x0000ab3c
+    8fb0:	0000aaf0 	.word	0x0000aaf0
+    8fb4:	0000ab3a 	.word	0x0000ab3a
+    8fb8:	0000ab10 	.word	0x0000ab10
+    8fbc:	0000aad0 	.word	0x0000aad0
+    8fc0:	0000ab40 	.word	0x0000ab40
+    8fc4:	0000ab44 	.word	0x0000ab44
     8fc8:	00000000 	.word	0x00000000
     8fcc:	00008d73 	.word	0x00008d73
 
@@ -25092,8 +25092,8 @@ static inline void stdio_serial_init(
     92d2:	4240      	negs	r0, r0
     92d4:	b00b      	add	sp, #44	; 0x2c
     92d6:	bdf0      	pop	{r4, r5, r6, r7, pc}
-    92d8:	0000ab54 	.word	0x0000ab54
-    92dc:	0000ab43 	.word	0x0000ab43
+    92d8:	0000ab5c 	.word	0x0000ab5c
+    92dc:	0000ab4b 	.word	0x0000ab4b
 
 000092e0 <_putc_r>:
     92e0:	b570      	push	{r4, r5, r6, lr}
@@ -25142,9 +25142,9 @@ static inline void stdio_serial_init(
     9338:	0030      	movs	r0, r6
     933a:	f7ff f8c9 	bl	84d0 <__swbuf_r>
     933e:	e7ee      	b.n	931e <_putc_r+0x3e>
-    9340:	0000aae8 	.word	0x0000aae8
-    9344:	0000ab08 	.word	0x0000ab08
-    9348:	0000aac8 	.word	0x0000aac8
+    9340:	0000aaf0 	.word	0x0000aaf0
+    9344:	0000ab10 	.word	0x0000ab10
+    9348:	0000aad0 	.word	0x0000aad0
 
 0000934c <__sread>:
     934c:	b570      	push	{r4, r5, r6, lr}
@@ -25816,7 +25816,7 @@ static inline void stdio_serial_init(
     a800:	0a0d2d2d 53202d2d 32574d41 50585f35     --..-- SAMW25_XP
     a810:	4e49414c 505f4445 2d204f52 2d0a0d2d     LAINED_PRO --..-
     a820:	6f43202d 6c69706d 203a6465 20727041     - Compiled: Apr 
-    a830:	32203031 20373130 303a3332 38333a30     10 2017 23:00:38
+    a830:	32203231 20373130 323a3731 35303a32     12 2017 17:22:05
     a840:	0d2d2d20 00000000 68540a0d 61207369      --.......This a
     a850:	696c7070 69746163 72206e6f 69757165     pplication requi
     a860:	20736572 20656874 74205041 6168206f     res the AP to ha
@@ -25853,58 +25853,58 @@ static inline void stdio_serial_init(
     aa50:	4649575f 4f435f49 43454e4e 0d444554     _WIFI_CONNECTED.
     aa60:	00000000 69666977 3a62635f 4d324d20     ....wifi_cb: M2M
     aa70:	4649575f 49445f49 4e4f4353 5443454e     _WIFI_DISCONNECT
-    aa80:	000d4445 636c6557 48656d6f 00006c61     ED..WelcomeHal..
-    aa90:	732d7068 70757465 0000312d 69666977     hp-setup-1..wifi
-    aaa0:	3a62635f 20504920 72646461 20737365     _cb: IP address 
-    aab0:	25207369 75252e75 2e75252e 0a0d7525     is %u.%u.%u.%u..
-    aac0:	00000000                                ....
+    aa80:	000d4445 7473616d 69737265 6169646e     ED..mastersindia
+    aa90:	00000000 6f6c2742 72476572 2d736461     ....B'loreGrads-
+    aaa0:	00342e32 69666977 3a62635f 20504920     2.4.wifi_cb: IP 
+    aab0:	72646461 20737365 25207369 75252e75     address is %u.%u
+    aac0:	2e75252e 0a0d7525 00000000              .%u.%u......
 
-0000aac4 <_global_impure_ptr>:
-    aac4:	20000010                                ... 
+0000aacc <_global_impure_ptr>:
+    aacc:	20000010                                ... 
 
-0000aac8 <__sf_fake_stderr>:
+0000aad0 <__sf_fake_stderr>:
 	...
 
-0000aae8 <__sf_fake_stdin>:
+0000aaf0 <__sf_fake_stdin>:
 	...
 
-0000ab08 <__sf_fake_stdout>:
+0000ab10 <__sf_fake_stdout>:
 	...
-    ab28:	4f500043 00584953 2d23002e 00202b30     C.POSIX...#-0+ .
-    ab38:	004c6c68 45676665 30004746 34333231     hlL.efgEFG.01234
-    ab48:	38373635 43424139 00464544 33323130     56789ABCDEF.0123
-    ab58:	37363534 62613938 66656463 20200000              456789abcdef.
+    ab30:	4f500043 00584953 2d23002e 00202b30     C.POSIX...#-0+ .
+    ab40:	004c6c68 45676665 30004746 34333231     hlL.efgEFG.01234
+    ab50:	38373635 43424139 00464544 33323130     56789ABCDEF.0123
+    ab60:	37363534 62613938 66656463 20200000              456789abcdef.
 
-0000ab65 <_ctype_>:
-    ab65:	20202000 20202020 28282020 20282828     .         ((((( 
-    ab75:	20202020 20202020 20202020 20202020                     
-    ab85:	10108820 10101010 10101010 10101010      ...............
-    ab95:	04040410 04040404 10040404 10101010     ................
-    aba5:	41411010 41414141 01010101 01010101     ..AAAAAA........
-    abb5:	01010101 01010101 01010101 10101010     ................
-    abc5:	42421010 42424242 02020202 02020202     ..BBBBBB........
-    abd5:	02020202 02020202 02020202 10101010     ................
-    abe5:	00000020 00000000 00000000 00000000      ...............
+0000ab6d <_ctype_>:
+    ab6d:	20202000 20202020 28282020 20282828     .         ((((( 
+    ab7d:	20202020 20202020 20202020 20202020                     
+    ab8d:	10108820 10101010 10101010 10101010      ...............
+    ab9d:	04040410 04040404 10040404 10101010     ................
+    abad:	41411010 41414141 01010101 01010101     ..AAAAAA........
+    abbd:	01010101 01010101 01010101 10101010     ................
+    abcd:	42421010 42424242 02020202 02020202     ..BBBBBB........
+    abdd:	02020202 02020202 02020202 10101010     ................
+    abed:	00000020 00000000 00000000 00000000      ...............
 	...
 
-0000ac68 <_init>:
-    ac68:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
-    ac6a:	46c0      	nop			; (mov r8, r8)
-    ac6c:	bcf8      	pop	{r3, r4, r5, r6, r7}
-    ac6e:	bc08      	pop	{r3}
-    ac70:	469e      	mov	lr, r3
-    ac72:	4770      	bx	lr
+0000ac70 <_init>:
+    ac70:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+    ac72:	46c0      	nop			; (mov r8, r8)
+    ac74:	bcf8      	pop	{r3, r4, r5, r6, r7}
+    ac76:	bc08      	pop	{r3}
+    ac78:	469e      	mov	lr, r3
+    ac7a:	4770      	bx	lr
 
-0000ac74 <__init_array_start>:
-    ac74:	000000dd 	.word	0x000000dd
+0000ac7c <__init_array_start>:
+    ac7c:	000000dd 	.word	0x000000dd
 
-0000ac78 <_fini>:
-    ac78:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
-    ac7a:	46c0      	nop			; (mov r8, r8)
-    ac7c:	bcf8      	pop	{r3, r4, r5, r6, r7}
-    ac7e:	bc08      	pop	{r3}
-    ac80:	469e      	mov	lr, r3
-    ac82:	4770      	bx	lr
+0000ac80 <_fini>:
+    ac80:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+    ac82:	46c0      	nop			; (mov r8, r8)
+    ac84:	bcf8      	pop	{r3, r4, r5, r6, r7}
+    ac86:	bc08      	pop	{r3}
+    ac88:	469e      	mov	lr, r3
+    ac8a:	4770      	bx	lr
 
-0000ac84 <__fini_array_start>:
-    ac84:	000000b5 	.word	0x000000b5
+0000ac8c <__fini_array_start>:
+    ac8c:	000000b5 	.word	0x000000b5

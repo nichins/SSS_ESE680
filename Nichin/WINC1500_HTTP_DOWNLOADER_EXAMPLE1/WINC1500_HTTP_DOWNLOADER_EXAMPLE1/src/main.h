@@ -46,15 +46,15 @@ extern "C" {
 #endif
 
 /** Wi-Fi AP Settings. */
-#define MAIN_WLAN_SSID                       "hp-setup-1" /**< Destination SSID */
+#define MAIN_WLAN_SSID                       "B'loreGrads-2.4" /**< Destination SSID hp-setup-1*/
 #define MAIN_WLAN_AUTH                       M2M_WIFI_SEC_WPA_PSK /**< Security manner */
-#define MAIN_WLAN_PSK                        "WelcomeHal" /**< Password for Destination SSID */
+#define MAIN_WLAN_PSK                        "mastersindia" /**< Password for Destination SSID WelcomeHal*/
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
 
 /** Content URI for download. */
-#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/test21kB.txt" // other files: test.txt test1kB.txt test2kB.txt test3kB.txt test4kB.txt
+#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/test21kB.txt"
 
 /** Maximum size for packet buffer. */
 #define MAIN_BUFFER_MAX_SIZE                 (1024)
