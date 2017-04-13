@@ -228,14 +228,15 @@ void write_spi_flash_frm_buf(uint32 len){
 	at25dfx_chip_wake(&at25dfx_chip);
 	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
 		// Handle missing or non-responsive device
+		printf("Chip didnt wake \r\n");
 	}
 	
-	at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_addr, false);				// unprotect sector
-	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr, AT25DFX_BLOCK_SIZE_4KB);	// erase block
+	//at25dfx_chip_set_sector_protect(&at25dfx_chip, flash_addr, false);				// unprotect sector
+	
 	at25dfx_chip_write_buffer(&at25dfx_chip, flash_addr, http_buf + http_buf_read_ptr, len);	// write buffer
-	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, len);		// read same location
+	//at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, len);		// read same location
 	//at25dfx_chip_read_buffer(&at25dfx_chip, (flash_addr+0x0020), read_buffer, AT25DFX_BUFFER_SIZE);		// read same location
-	at25dfx_chip_set_global_sector_protect(&at25dfx_chip, true);				// protect sector
+	//at25dfx_chip_set_global_sector_protect(&at25dfx_chip, true);				// protect sector
 	at25dfx_chip_sleep(&at25dfx_chip);											// back to sleep
 	flash_addr = flash_addr + len;
 }
@@ -451,6 +452,16 @@ static void configure_http_client(void)
 static void download_firmware()
 {
 	flash_addr = 0x00000; //Starting addr on flash where downloaded file is stored
+	at25dfx_chip_wake(&at25dfx_chip);
+	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
+		// Handle missing or non-responsive device
+	}
+	
+	at25dfx_chip_set_global_sector_protect(&at25dfx_chip, false);
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr, AT25DFX_BLOCK_SIZE_64KB);	// erase block
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr + 0x10000, AT25DFX_BLOCK_SIZE_64KB);
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr + 0x20000, AT25DFX_BLOCK_SIZE_64KB);
+	at25dfx_chip_erase_block(&at25dfx_chip, flash_addr + 0x30000, AT25DFX_BLOCK_SIZE_64KB);
 	
 	/* Connect to router and download stuff and store it in flash */
 	printf("download_firmware: connecting to WiFi AP %s...\r\n", (char *)MAIN_WLAN_SSID);
@@ -460,6 +471,16 @@ static void download_firmware()
 		sw_timer_task(&swt_module_inst);
 	}
 	printf("download_firmware: done.\r\n");
+	
+	//For debugging this shit
+	flash_addr = 0x00000;
+	at25dfx_chip_wake(&at25dfx_chip);
+	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
+		// Handle missing or non-responsive device
+	}
+	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, AT25DFX_BUFFER_SIZE);
+	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr+AT25DFX_BUFFER_SIZE, read_buffer, AT25DFX_BUFFER_SIZE);
+	at25dfx_chip_sleep(&at25dfx_chip);
 }
 
 int main (void)
@@ -512,7 +533,7 @@ int main (void)
 		{
 			// download firmware into serial flash and upgrade
 			download_firmware();
-			printf("Pretending to download firmware\n\r");
+			printf("\n\r Main: Done downloading firmware\n\r");
 			Firmware_Status_t fw_status = getFWStat();//*(Firmware_Status_t*)FW_STAT_ADDRESS;
 			//printf("fw_status.writenew_image = %d\n\r before mod\n\r", fw_status.writenew_image);
 			*(uint32_t*)fw_status.signature = 0xEFBEADDE; //replace with checksum of downloaded image

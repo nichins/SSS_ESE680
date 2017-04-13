@@ -52,7 +52,7 @@ extern unsigned char params[];
 #define FW_STAT_ADDRESS			     0x7F00
 #define BOOT_PIN					PIN_PB23 //pin tied to button for stay in boot mode
 // spi flash stufff
-#define AT25DFX_BUFFER_SIZE				256
+#define AT25DFX_BUFFER_SIZE				NVMCTRL_PAGE_SIZE
 #define AT25DFX_CLOCK_SPEED				120000
 #define AT25DFX_SPI_PINMUX_SETTING		SPI_SIGNAL_MUX_SETTING_E
 #define AT25DFX_SPI_PINMUX_PAD0			PINMUX_PA16C_SERCOM1_PAD0
@@ -170,7 +170,7 @@ static void upgradeFW(Firmware_Status_t thisFW)
 		
 		// increment addr_i
 		addr_i += 256;
-		printf("addr_i: %x\r\n", addr_i);
+		//printf("addr_i: %x\r\n", addr_i);
 	}
 	//at25dfx_chip_read_buffer(&at25dfx_chip, flash_fw_addr, read_buffer, AT25DFX_BUFFER_SIZE);	
 	//computer CRC for the entire block and compare with the CRC stored by the app.
