@@ -41,6 +41,7 @@ typedef struct
 	uint8_t executing_image;
 	uint8_t downloaded_image;
 	uint8_t writenew_image;
+	uint8_t reset_count;		// Reset counter for app recovery
 }Firmware_Status_t;
 
 bool write_firmware=false;
@@ -113,6 +114,27 @@ static void configure_nvm()
 	nvm_set_config(&config);
 }
 
+static Firmware_Status_t getFWStat()
+{
+	status_code_genare_t error_code;
+	uint8_t read_buffer[NVMCTRL_PAGE_SIZE]={0};
+	do
+	{
+		error_code = nvm_read_buffer(FW_STAT_ADDRESS, read_buffer, NVMCTRL_PAGE_SIZE);	// Write buffer to FW_STAT page
+	} while (error_code == STATUS_BUSY);
+	Firmware_Status_t thisFW;
+	thisFW.signature[0]			= read_buffer[0];
+	thisFW.signature[1]			= read_buffer[1];
+	thisFW.signature[2]			= read_buffer[2];
+	thisFW.signature[3]			= read_buffer[3];
+	thisFW.executing_image		= read_buffer[4];
+	thisFW.downloaded_image		= read_buffer[5];
+	thisFW.writenew_image		= read_buffer[6];
+	thisFW.reset_count			= read_buffer[7];
+	return thisFW;
+	//return *(Firmware_Status_t*)FW_STAT_ADDRESS;	// return the firmware status
+}
+
 static void writeFWStat(Firmware_Status_t thisFW)
 {
 	uint8_t page_buffer[NVMCTRL_PAGE_SIZE]={0};
@@ -133,6 +155,13 @@ static void writeFWStat(Firmware_Status_t thisFW)
 	do
 	{
 		error_code = nvm_write_buffer(FW_STAT_ADDRESS, page_buffer, NVMCTRL_PAGE_SIZE);	// Write buffer to FW_STAT page
+	} while (error_code == STATUS_BUSY);
+	
+	/* test - read back NVM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	uint8_t read_buffer[NVMCTRL_PAGE_SIZE]={0};
+	do
+	{
+		error_code = nvm_read_buffer(FW_STAT_ADDRESS, read_buffer, NVMCTRL_PAGE_SIZE);	// Write buffer to FW_STAT page
 	} while (error_code == STATUS_BUSY);
 }
 void configure_port_pins(void)
@@ -349,7 +378,6 @@ static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 	http_client_socket_event_handler(sock, u8Msg, pvMsg);
 }
 
-
 static void resolve_cb(uint8_t *pu8DomainName, uint32_t u32ServerIP)
 {
 	printf("resolve_cb: %s IP address is %d.%d.%d.%d\r\n\r\n", pu8DomainName,
@@ -400,7 +428,6 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 	}
 }
 
-
 static void configure_http_client(void)
 {
 	struct http_client_config httpc_conf;
@@ -447,7 +474,7 @@ int main (void)
 	configure_port_pins();
 	//delay_init();
 	configure_console();
-	//configure_nvm();
+	configure_nvm();
 	configure_spi_flash();
 	configure_timer();
 	configure_http_client();
@@ -466,7 +493,7 @@ int main (void)
 	
 	socketInit();
 	registerSocketCallback(socket_cb, resolve_cb);
-	
+	write_firmware = false; 
 	while (1) 
 	{
 		if (port_pin_get_input_level(B1) == true) {
@@ -475,20 +502,23 @@ int main (void)
 		else 
 		{
 			port_pin_set_output_level(LED_0_PIN, true);
+			write_firmware = true;
 		}
 		
 		// receive command from IBM BlueMix
 		//....................
-		write_firmware = true; //set this to true
 		//write the updated status
 		if(write_firmware)
 		{
 			// download firmware into serial flash and upgrade
 			download_firmware();
-			Firmware_Status_t fw_status = *(Firmware_Status_t*)FW_STAT_ADDRESS;
+			printf("Pretending to download firmware\n\r");
+			Firmware_Status_t fw_status = getFWStat();//*(Firmware_Status_t*)FW_STAT_ADDRESS;
+			//printf("fw_status.writenew_image = %d\n\r before mod\n\r", fw_status.writenew_image);
 			*(uint32_t*)fw_status.signature = 0xEFBEADDE; //replace with checksum of downloaded image
-// 			fw_status.downloaded_image = fill version for downloaded image
-// 			fw_status.writenew_image = 0xFF;  // write image flag
+ 			fw_status.downloaded_image = 0;
+ 			fw_status.writenew_image = 1;  // write image flag
+			//printf("fw_status.writenew_image = %d\n\r after mod before write\n\r", fw_status.writenew_image);
 			writeFWStat(fw_status);
 			// reset to begin writing firmware
 			system_reset();

@@ -280,12 +280,12 @@ int main (void)
 	//check if button is pressed to lock in boot
 	while(n++ < 1000)
 	{
-		if(!port_pin_get_input_level(BOOT_PIN))
+		/*if(!port_pin_get_input_level(BOOT_PIN)) // KILLED THIS SO WE CAN USE THE BUTTON IN APP TESTING FOR NOW ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		{
 			remain_in_boot = 1;
 			init_drivers();
 			break;
-		}
+		}*/
 	}
 	while(1) 
 	{
@@ -294,7 +294,7 @@ int main (void)
 			// check for firmware download requested
 			Firmware_Status_t thisFW = getFWStat();
 			//thisFW.downloaded_image = 0;
-			//thisFW.writenew_image = 1;
+			thisFW.writenew_image = 0;		// Override writenew_image cause we're testing goddamnit
 			if(thisFW.writenew_image)
 			{
 				init_drivers();
