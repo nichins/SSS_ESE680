@@ -51,7 +51,7 @@ extern unsigned char params[];
 #define APP_START_ADDRESS			 0x8000
 #define FW_STAT_ADDRESS			     0x7F00
 #define BOOT_PIN					PIN_PB23 //pin tied to button for stay in boot mode
-// spi flash stufff
+// spi flash stuff
 #define AT25DFX_BUFFER_SIZE				NVMCTRL_PAGE_SIZE
 #define AT25DFX_CLOCK_SPEED				120000
 #define AT25DFX_SPI_PINMUX_SETTING		SPI_SIGNAL_MUX_SETTING_E
@@ -294,7 +294,7 @@ int main (void)
 			// check for firmware download requested
 			Firmware_Status_t thisFW = getFWStat();
 			//thisFW.downloaded_image = 0;
-			thisFW.writenew_image = 0;		// Override writenew_image cause we're testing goddamnit
+			//thisFW.writenew_image = 0;		// Override writenew_image cause we're testing goddamnit
 			if(thisFW.writenew_image)
 			{
 				init_drivers();

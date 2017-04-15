@@ -11,15 +11,16 @@ extern "C" {
 #endif
 
 /** Wi-Fi AP Settings. */
-#define MAIN_WLAN_SSID                       "hp-setup-1" /**< Destination SSID */
+#define MAIN_WLAN_SSID                       "TroyAndAbedInTheModem" /**< Destination SSID */
 #define MAIN_WLAN_AUTH                       M2M_WIFI_SEC_WPA_PSK /**< Security manner */
-#define MAIN_WLAN_PSK                        "WelcomeHal" /**< Password for Destination SSID */
+#define MAIN_WLAN_PSK                        "cakeboss" /**< Password for Destination SSID */
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
 
 /** Content URI for download. */
 #define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/button_led2.bin" 
+#define MAIN_HTTP_CRC_URL					"https://www.seas.upenn.edu/~rspicer/button_led2_crc.bin"
 
 /** Maximum size for packet buffer. */
 #define MAIN_BUFFER_MAX_SIZE                 (1024)

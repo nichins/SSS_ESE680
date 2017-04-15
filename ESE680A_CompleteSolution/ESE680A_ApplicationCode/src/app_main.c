@@ -45,6 +45,10 @@ typedef struct
 }Firmware_Status_t;
 
 bool write_firmware=false;
+crc32_t crcChecker;		// CRC object for calculating CRC
+bool firstCRC = true;	// Flag for first CRC calc
+bool notCRC = true;		// Flag to indicate we're not downloading CRC yet 
+uint32_t dlCRC;			// Downloaded CRC
 
 struct usart_module usart_instance;
 
@@ -76,7 +80,7 @@ struct spi_module at25dfx_spi;
 struct at25dfx_chip_module at25dfx_chip;
 
 //http Downloading stufff
-uint32_t flash_addr = 0x00000;
+uint32_t flash_addr;
 uint8_t http_buf [2048];
 uint32_t http_buf_write_ptr = 0x00000;
 uint32_t http_buf_read_ptr = 0x00000;
@@ -145,6 +149,7 @@ static void writeFWStat(Firmware_Status_t thisFW)
 	page_buffer[4] = thisFW.executing_image;
 	page_buffer[5] = thisFW.downloaded_image;
 	page_buffer[6] = thisFW.writenew_image;
+	page_buffer[7] = 0;
 	
 	status_code_genare_t error_code;
 	do
@@ -269,6 +274,34 @@ static void start_download(void)
 	http_client_send_request(&http_client_module_inst, MAIN_HTTP_FILE_URL, HTTP_METHOD_GET, NULL, NULL);
 }
 
+static void start_download_CRC(void)
+{
+	/*
+	if (!is_state_set(STORAGE_READY)) {
+		printf("start_download: Flash not initialized.\r\n");
+		return;
+	}
+	*/
+	if (!is_state_set(WIFI_CONNECTED)) {
+		printf("start_download: Wi-Fi is not connected.\r\n");
+		return;
+	}
+
+	if (is_state_set(GET_REQUESTED)) {
+		printf("start_download: request is sent already.\r\n");
+		return;
+	}
+
+	if (is_state_set(DOWNLOADING)) {
+		printf("start_download: running download already.\r\n");
+		return;
+	}
+
+	/* Send the HTTP request. */
+	printf("start_download: sending HTTP request...\r\n");
+	http_client_send_request(&http_client_module_inst, MAIN_HTTP_CRC_URL, HTTP_METHOD_GET, NULL, NULL);
+}
+
 static void http_client_callback(struct http_client_module *module_inst, int type, union http_client_data *data)
 {
 	switch (type) {
@@ -301,8 +334,20 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 		break;
 
 	case HTTP_CLIENT_CALLBACK_RECV_CHUNKED_DATA:
+	if (notCRC) {
 		printf("http_client_callback_CHUNKED DATA: received response data size %u\r\n",
 				(unsigned int)data->recv_chunked_data.length);
+		// Calc CRC for this chunk
+		if (firstCRC) {
+			crc32_calculate(data->recv_chunked_data.data, (unsigned int)data->recv_chunked_data.length, &crcChecker);
+			printf("First block length %d CRC: %u\r\n", (unsigned int)data->recv_chunked_data.length, crcChecker);
+			firstCRC = false;
+		}
+		else {
+			crc32_recalculate(data->recv_chunked_data.data, (unsigned int)data->recv_chunked_data.length, &crcChecker);
+			printf("Block length %d CRC: %u\r\n", (unsigned int)data->recv_chunked_data.length, crcChecker);
+		}
+		
 		//***store_file_packet(data->recv_chunked_data.data, data->recv_chunked_data.length);
 		if (http_buf_write_ptr + data->recv_chunked_data.length > 2048){
 			memcpy_ram2ram(http_buf + http_buf_write_ptr,data->recv_chunked_data.data,(2048-http_buf_write_ptr));
@@ -346,7 +391,12 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 				write_spi_flash_frm_buf(http_buf_write_ptr-http_buf_read_ptr);
 			}
 		}
-
+	}
+	else {
+		printf("Callback: CRC download chunked data\r\n");
+		dlCRC = data->recv_chunked_data.data;
+		printf("Received %lu\r\n", (unsigned long)dlCRC);
+	}
 		break;
 
 	case HTTP_CLIENT_CALLBACK_DISCONNECTED:
@@ -421,7 +471,6 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 			pu8IPAddress[0], pu8IPAddress[1], pu8IPAddress[2], pu8IPAddress[3]);
 			add_state(WIFI_CONNECTED);
 			start_download();
-			break;
 		}
 
 		default:
@@ -449,9 +498,9 @@ static void configure_http_client(void)
 		http_client_register_callback(&http_client_module_inst, http_client_callback);
 }
 
-static void download_firmware()
+static void download_firmware(unsigned int slot)
 {
-	flash_addr = 0x00000; //Starting addr on flash where downloaded file is stored
+	flash_addr = 0x40000 * slot; //Starting addr on flash where downloaded file is stored
 	at25dfx_chip_wake(&at25dfx_chip);
 	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
 		// Handle missing or non-responsive device
@@ -471,9 +520,10 @@ static void download_firmware()
 		sw_timer_task(&swt_module_inst);
 	}
 	printf("download_firmware: done.\r\n");
+	printf("Calculated CRC: %lu\r\n", (unsigned long)crcChecker);
 	
 	//For debugging this shit
-	flash_addr = 0x00000;
+	//flash_addr = 0x00000;
 	at25dfx_chip_wake(&at25dfx_chip);
 	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
 		// Handle missing or non-responsive device
@@ -532,12 +582,19 @@ int main (void)
 		if(write_firmware)
 		{
 			// download firmware into serial flash and upgrade
-			download_firmware();
+			Firmware_Status_t fw_status = getFWStat();
+			if (fw_status.executing_image == 1) {
+				fw_status.downloaded_image = 2;
+			}
+			else {
+				fw_status.downloaded_image = 1;
+			}
+			printf("Executing image: %d, DL to: %d\r\n", fw_status.executing_image, fw_status.downloaded_image);
+			download_firmware(fw_status.downloaded_image);
 			printf("\n\r Main: Done downloading firmware\n\r");
-			Firmware_Status_t fw_status = getFWStat();//*(Firmware_Status_t*)FW_STAT_ADDRESS;
+			
 			//printf("fw_status.writenew_image = %d\n\r before mod\n\r", fw_status.writenew_image);
 			*(uint32_t*)fw_status.signature = 0xEFBEADDE; //replace with checksum of downloaded image
- 			fw_status.downloaded_image = 0;
  			fw_status.writenew_image = 1;  // write image flag
 			//printf("fw_status.writenew_image = %d\n\r after mod before write\n\r", fw_status.writenew_image);
 			writeFWStat(fw_status);

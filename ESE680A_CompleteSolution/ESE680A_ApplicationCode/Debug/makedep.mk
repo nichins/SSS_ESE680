@@ -38,6 +38,8 @@ src\ASF\common\components\wifi\winc1500\socket\source\socket.c
 
 src\ASF\common\components\wifi\winc1500\spi_flash\source\spi_flash.c
 
+src\ASF\common\services\crc32\crc32.c
+
 src\ASF\sam0\drivers\extint\extint_callback.c
 
 src\ASF\sam0\drivers\extint\extint_sam_d_r_h\extint.c
