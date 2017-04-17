@@ -501,11 +501,9 @@ static void download_firmware(unsigned int slot)
 	printf("download_firmware: done.\r\n");
 	printf("Calculated CRC: %x\r\n", (uint32_t)crcChecker);
 	
-	//clear_state(COMPLETED|DOWNLOADING|GET_REQUESTED|CANCELED);
-	m2m_wifi_disconnect();
+	clear_state(COMPLETED|DOWNLOADING|GET_REQUESTED|CANCELED);
 	download_CRC = true;
-	init_state();
-	m2m_wifi_connect((char *)MAIN_WLAN_SSID, sizeof(MAIN_WLAN_SSID), MAIN_WLAN_AUTH, (char *)MAIN_WLAN_PSK, M2M_WIFI_CH_ALL);
+	start_download();
 	while (!(is_state_set(COMPLETED) || is_state_set(CANCELED))) {
 		m2m_wifi_handle_events(NULL);
 		sw_timer_task(&swt_module_inst);
