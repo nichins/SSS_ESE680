@@ -576,19 +576,17 @@ int main (void)
 			printf("Executing image: %d, DL to: %d\r\n", fw_status.executing_image, fw_status.downloaded_image);
 			firstCRC=true;
 			download_firmware(fw_status.downloaded_image);
-			printf("\n\r Main: Done downloading firmware and CRC\n\r");
+			printf("\n\rMain: Done downloading firmware and CRC\n\r");
 			
 			if (dlCRC == crcChecker){
-				printf("\n\r Main: CRC MATCHED!\n\r");
+				printf("\n\rMain: CRC MATCHED!\n\r");
+				*(uint32_t*)fw_status.signature = (uint32_t)crcChecker; //replace with checksum of downloaded image
+				fw_status.writenew_image = 1;  // write image flag
+				writeFWStat(fw_status);
 			} else {
 				printf("\n\r Main: CRC Check Fail!\n\r");
 			}
-				 
-			//printf("fw_status.writenew_image = %d\n\r before mod\n\r", fw_status.writenew_image);
-			*(uint32_t*)fw_status.signature = 0xEFBEADDE; //replace with checksum of downloaded image
- 			fw_status.writenew_image = 1;  // write image flag
-			//printf("fw_status.writenew_image = %d\n\r after mod before write\n\r", fw_status.writenew_image);
-			writeFWStat(fw_status);
+			
 			// reset to begin writing firmware
 			system_reset();
 		}
