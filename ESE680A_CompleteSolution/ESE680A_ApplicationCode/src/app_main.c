@@ -47,7 +47,7 @@ typedef struct
 bool write_firmware=false;
 crc32_t crcChecker;		// CRC object for calculating CRC
 bool firstCRC = true;	// Flag for first CRC calc
-bool notCRC = true;		// Flag to indicate we're not downloading CRC yet 
+bool download_CRC = false; //Are we downloading CRC?
 uint32_t dlCRC;			// Downloaded CRC
 
 struct usart_module usart_instance;
@@ -163,11 +163,11 @@ static void writeFWStat(Firmware_Status_t thisFW)
 	} while (error_code == STATUS_BUSY);
 	
 	/* test - read back NVM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	uint8_t read_buffer[NVMCTRL_PAGE_SIZE]={0};
-	do
-	{
-		error_code = nvm_read_buffer(FW_STAT_ADDRESS, read_buffer, NVMCTRL_PAGE_SIZE);	// Write buffer to FW_STAT page
-	} while (error_code == STATUS_BUSY);
+	//uint8_t read_buffer[NVMCTRL_PAGE_SIZE]={0};
+	//do
+	//{
+		//error_code = nvm_read_buffer(FW_STAT_ADDRESS, read_buffer, NVMCTRL_PAGE_SIZE);	
+	//} while (error_code == STATUS_BUSY);
 }
 void configure_port_pins(void)
 {
@@ -270,36 +270,14 @@ static void start_download(void)
 	}
 
 	/* Send the HTTP request. */
-	printf("start_download: sending HTTP request...\r\n");
-	http_client_send_request(&http_client_module_inst, MAIN_HTTP_FILE_URL, HTTP_METHOD_GET, NULL, NULL);
-}
-
-static void start_download_CRC(void)
-{
-	/*
-	if (!is_state_set(STORAGE_READY)) {
-		printf("start_download: Flash not initialized.\r\n");
-		return;
+	if(download_CRC == false){
+		printf("start_download: sending HTTP request...\r\n");
+		http_client_send_request(&http_client_module_inst, MAIN_HTTP_FILE_URL, HTTP_METHOD_GET, NULL, NULL);
+	} else{
+		printf("start_download CRC: sending HTTP request...\r\n");
+		http_client_send_request(&http_client_module_inst, MAIN_HTTP_CRC_URL, HTTP_METHOD_GET, NULL, NULL);
 	}
-	*/
-	if (!is_state_set(WIFI_CONNECTED)) {
-		printf("start_download: Wi-Fi is not connected.\r\n");
-		return;
-	}
-
-	if (is_state_set(GET_REQUESTED)) {
-		printf("start_download: request is sent already.\r\n");
-		return;
-	}
-
-	if (is_state_set(DOWNLOADING)) {
-		printf("start_download: running download already.\r\n");
-		return;
-	}
-
-	/* Send the HTTP request. */
-	printf("start_download: sending HTTP request...\r\n");
-	http_client_send_request(&http_client_module_inst, MAIN_HTTP_CRC_URL, HTTP_METHOD_GET, NULL, NULL);
+	
 }
 
 static void http_client_callback(struct http_client_module *module_inst, int type, union http_client_data *data)
@@ -328,13 +306,19 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 			//***store_file_packet(data->recv_response.content, data->recv_response.content_length);
 			
 			//This is run only when file size < MAIN_BUFFER_MAX_SIZE which we assume never happens!
+			printf("Callback: CRC download......\r\n");
+			dlCRC = *(uint32_t *)data->recv_response.content;
+			dlCRC =  ((dlCRC>>24)&0xff) | // move byte 3 to byte 0
+                    ((dlCRC<<8)&0xff0000) | // move byte 1 to byte 2
+                    ((dlCRC>>8)&0xff00) | // move byte 2 to byte 1
+                    ((dlCRC<<24)&0xff000000); // byte 0 to byte 3
+			printf("Received %x\r\n", (uint32_t)dlCRC);
 			
 			add_state(COMPLETED);
 		}
 		break;
 
 	case HTTP_CLIENT_CALLBACK_RECV_CHUNKED_DATA:
-	if (notCRC) {
 		printf("http_client_callback_CHUNKED DATA: received response data size %u\r\n",
 				(unsigned int)data->recv_chunked_data.length);
 		// Calc CRC for this chunk
@@ -391,12 +375,6 @@ static void http_client_callback(struct http_client_module *module_inst, int typ
 				write_spi_flash_frm_buf(http_buf_write_ptr-http_buf_read_ptr);
 			}
 		}
-	}
-	else {
-		printf("Callback: CRC download chunked data\r\n");
-		dlCRC = data->recv_chunked_data.data;
-		printf("Received %lu\r\n", (unsigned long)dlCRC);
-	}
 		break;
 
 	case HTTP_CLIENT_CALLBACK_DISCONNECTED:
@@ -471,6 +449,7 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 			pu8IPAddress[0], pu8IPAddress[1], pu8IPAddress[2], pu8IPAddress[3]);
 			add_state(WIFI_CONNECTED);
 			start_download();
+
 		}
 
 		default:
@@ -520,27 +499,34 @@ static void download_firmware(unsigned int slot)
 		sw_timer_task(&swt_module_inst);
 	}
 	printf("download_firmware: done.\r\n");
-	printf("Calculated CRC: %lu\r\n", (unsigned long)crcChecker);
+	printf("Calculated CRC: %x\r\n", (uint32_t)crcChecker);
 	
+	//clear_state(COMPLETED|DOWNLOADING|GET_REQUESTED|CANCELED);
+	m2m_wifi_disconnect();
+	download_CRC = true;
+	init_state();
+	m2m_wifi_connect((char *)MAIN_WLAN_SSID, sizeof(MAIN_WLAN_SSID), MAIN_WLAN_AUTH, (char *)MAIN_WLAN_PSK, M2M_WIFI_CH_ALL);
+	while (!(is_state_set(COMPLETED) || is_state_set(CANCELED))) {
+		m2m_wifi_handle_events(NULL);
+		sw_timer_task(&swt_module_inst);
+	}
+	
+	download_CRC = false;
 	//For debugging this shit
 	//flash_addr = 0x00000;
-	at25dfx_chip_wake(&at25dfx_chip);
-	if (at25dfx_chip_check_presence(&at25dfx_chip) != STATUS_OK) {
-		// Handle missing or non-responsive device
-	}
-	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr, read_buffer, AT25DFX_BUFFER_SIZE);
-	at25dfx_chip_read_buffer(&at25dfx_chip, flash_addr+AT25DFX_BUFFER_SIZE, read_buffer, AT25DFX_BUFFER_SIZE);
-	at25dfx_chip_sleep(&at25dfx_chip);
+
 }
+
 
 int main (void)
 {
 	
 	tstrWifiInitParam param;
 	int8_t ret;
-	init_state();
+	
 	
 	system_init();
+	init_state();
 	//system_interrupt_enable_global();
 	configure_port_pins();
 	//delay_init();
@@ -590,9 +576,16 @@ int main (void)
 				fw_status.downloaded_image = 1;
 			}
 			printf("Executing image: %d, DL to: %d\r\n", fw_status.executing_image, fw_status.downloaded_image);
+			firstCRC=true;
 			download_firmware(fw_status.downloaded_image);
-			printf("\n\r Main: Done downloading firmware\n\r");
+			printf("\n\r Main: Done downloading firmware and CRC\n\r");
 			
+			if (dlCRC == crcChecker){
+				printf("\n\r Main: CRC MATCHED!\n\r");
+			} else {
+				printf("\n\r Main: CRC Check Fail!\n\r");
+			}
+				 
 			//printf("fw_status.writenew_image = %d\n\r before mod\n\r", fw_status.writenew_image);
 			*(uint32_t*)fw_status.signature = 0xEFBEADDE; //replace with checksum of downloaded image
  			fw_status.writenew_image = 1;  // write image flag
