@@ -61,6 +61,7 @@ extern "C" {
 #define MAIN_CHAT_TOPIC "chat"
 #define SENSOR_TOPIC    "sensor"
 #define ACTUATOR_TOPIC  "actuator"
+#define UPGRADE_TOPIC	"upgrade"
 
 /*
  * A MQTT broker server which was connected.
@@ -79,8 +80,8 @@ static const char main_mqtt_broker[] = "m11.cloudmqtt.com";
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
 
 /** Content URI for download. */
-#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~nichins/button_led2.bin"
-#define MAIN_HTTP_CRC_URL					"https://www.seas.upenn.edu/~nichins/button_led2_crc.bin"
+#define MAIN_HTTP_FILE_URL                   "https://www.seas.upenn.edu/~rspicer/FW.bin"
+#define MAIN_HTTP_CRC_URL					"https://www.seas.upenn.edu/~rspicer/FW_CRC.bin"
 
 /** Maximum size for packet buffer. */
 #define MAIN_BUFFER_MAX_SIZE                 (1024)

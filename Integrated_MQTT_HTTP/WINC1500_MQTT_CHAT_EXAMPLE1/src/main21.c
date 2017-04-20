@@ -23,7 +23,7 @@ bool firstCRC = true;	// Flag for first CRC calc
 bool download_CRC = false; //Are we downloading CRC?
 uint32_t dlCRC;			// Downloaded CRC
 
-#define FIRMWARE_VERSION			 0x01
+#define FIRMWARE_VERSION			 0x02
 #define LED_0_PIN					 PIN_PA23
 #define B1							 PIN_PB23
 #define FW_STAT_ADDRESS			     0x7F00
@@ -233,6 +233,8 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 			printf("Past sensor sub\r\n");
 			status = mqtt_subscribe(module_inst, ACTUATOR_TOPIC, 2);
 			printf("Past actuator sub\r\n");
+			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, 2);
+			printf("Past upgrade sub\r\n");
 			/* Enable USART receiving callback. */
 			usart_enable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
 			printf("Preparation of the chat has been completed.\r\n");
@@ -257,7 +259,6 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 				}
 				printf("\r\n");
 			}
-			
 			if (!strncmp(data->recv_publish.topic, ACTUATOR_TOPIC, strlen(ACTUATOR_TOPIC)) ) {
 				/* Print Topic */
 				printf("%s >> ", ACTUATOR_TOPIC);
@@ -273,6 +274,11 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 					port_pin_set_output_level(LED_0_PIN, false);
 				}
 				printf("\r\n");
+			}
+			if (!strncmp(data->recv_publish.topic, UPGRADE_TOPIC, strlen(UPGRADE_TOPIC)) ) {
+				/* Print Topic */
+				printf("Upgrade requested\r\n");
+				write_firmware = true;
 			}
 		}
 
@@ -441,7 +447,7 @@ void configure_port_pins(void)
 	port_get_config_defaults(&config_port_pin);
 	config_port_pin.direction = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(LED_0_PIN, &config_port_pin);
-	port_pin_set_output_level(LED_0_PIN, false);
+	port_pin_set_output_level(LED_0_PIN, true);
 	config_port_pin.direction = PORT_PIN_DIR_INPUT;
 	port_pin_set_config(B1, &config_port_pin);
 }
@@ -769,6 +775,8 @@ int main(void)
 	configure_spi_flash();
 	configure_port_pins();
 	
+	printf("I am firmware version %d\r\n", FIRMWARE_VERSION);
+	
 	printf("User : %s\r\n", mqtt_user);
 	printf("Password : %s\r\n", mqtt_pass);
 	sprintf(topic, "%s", MAIN_CHAT_TOPIC);
@@ -804,8 +812,10 @@ int main(void)
 		/* Checks the USART buffer. */
 		check_usart_buffer(topic);
 		if (port_pin_get_input_level(BUTTON_0_PIN) == false) {
-			sprintf(pub_text, "%d", 4);
-			mqtt_publish(&mqtt_inst, SENSOR_TOPIC, pub_text, 1, 1, 1);
+			int sensed = rand();
+			sprintf(pub_text, "%d", sensed);
+			printf("Sensed %d\r\n", sensed);
+			mqtt_publish(&mqtt_inst, SENSOR_TOPIC, pub_text, 8, 1, 1);
 			delay_ms(300);
 			//write_firmware = true;
 		}
@@ -822,11 +832,7 @@ int main(void)
 			}
 			/* ~~~~~~~~~~~~~~~~Begin HTTP client init~~~~~~~~~~~~~~~~~~*/
 			configure_http_client();
-			
-			//memset((uint8_t *)&param, 0, sizeof(tstrWifiInitParam));
-			
 			param.pfAppWifiCb = wifi_cb;
-			
 			ret = m2m_wifi_init(&param);
 			if (M2M_SUCCESS != ret) {
 				printf("main: m2m_wifi_init call error! (res %d)\r\n", ret);
