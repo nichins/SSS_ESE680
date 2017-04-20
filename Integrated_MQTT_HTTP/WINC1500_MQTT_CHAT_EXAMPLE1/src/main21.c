@@ -257,6 +257,23 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 				}
 				printf("\r\n");
 			}
+			
+			if (!strncmp(data->recv_publish.topic, ACTUATOR_TOPIC, strlen(ACTUATOR_TOPIC)) ) {
+				/* Print Topic */
+				printf("%s >> ", ACTUATOR_TOPIC);
+				//port_pin_toggle_output_level(LED_0_PIN);
+				/* Print message */
+				for (int i = 0; i < data->recv_publish.msg_size; i++) {
+					printf("%c", data->recv_publish.msg[i]);
+				}
+				if (data->recv_publish.msg[0] == 't') {
+					port_pin_set_output_level(LED_0_PIN, true);
+				}
+				else {
+					port_pin_set_output_level(LED_0_PIN, false);
+				}
+				printf("\r\n");
+			}
 		}
 
 		break;
@@ -424,6 +441,7 @@ void configure_port_pins(void)
 	port_get_config_defaults(&config_port_pin);
 	config_port_pin.direction = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(LED_0_PIN, &config_port_pin);
+	port_pin_set_output_level(LED_0_PIN, false);
 	config_port_pin.direction = PORT_PIN_DIR_INPUT;
 	port_pin_set_config(B1, &config_port_pin);
 }
@@ -749,6 +767,7 @@ int main(void)
 	init_state();
 	configure_nvm();
 	configure_spi_flash();
+	configure_port_pins();
 	
 	printf("User : %s\r\n", mqtt_user);
 	printf("Password : %s\r\n", mqtt_pass);

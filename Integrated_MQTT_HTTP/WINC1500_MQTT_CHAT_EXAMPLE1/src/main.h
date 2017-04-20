@@ -71,9 +71,9 @@ static const char main_mqtt_broker[] = "m11.cloudmqtt.com";
 #define MQTT_PORT       18861
 
 /** Wi-Fi Settings */
-#define MAIN_WLAN_SSID        "TroyAndAbedInTheModem" /* < Destination SSID */
+#define MAIN_WLAN_SSID        "Comcast-xlab-2.4"//"TroyAndAbedInTheModem" /* < Destination SSID */
 #define MAIN_WLAN_AUTH        M2M_WIFI_SEC_WPA_PSK /* < Security manner */
-#define MAIN_WLAN_PSK         "cakeboss" /* < Password for Destination SSID */
+#define MAIN_WLAN_PSK         "comcast123!"//"cakeboss" /* < Password for Destination SSID */
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
