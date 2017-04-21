@@ -71,9 +71,9 @@ extern "C" {
  * A MQTT broker server which was connected.
  * m2m.eclipse.org is public MQTT broker.
  */
-static const char main_mqtt_broker[] = "m11.cloudmqtt.com";
+static const char main_mqtt_broker[] = "96.245.77.135";//"m11.cloudmqtt.com";
 
-#define MQTT_PORT       18861
+#define MQTT_PORT       1883//18861
 
 /** Wi-Fi Settings */
 #define MAIN_WLAN_SSID        "TroyAndAbedInTheModem" /* < Destination SSID *///"hp-setup-1"//"Comcast-xlab-2.4"//

@@ -71,10 +71,10 @@ struct sw_timer_module swt_module_inst;
 //char mqtt_user[64] = "";
 
 /** User name of chat. */
-char mqtt_user[] = "aman";
+char mqtt_user[] = "ryan";
 
 /** Password of chat. */
-char mqtt_pass[] = "aman";
+char mqtt_pass[] = "ryan";
 
 /** Publishing text. */
 char pub_text[64] = "";
@@ -244,8 +244,8 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL0_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL1_TOPIC, QOS);
-			status = mqtt_subscribe(module_inst, FL0_TOPIC, QOS);
-			status = mqtt_subscribe(module_inst, FL1_TOPIC, QOS);
+			//status = mqtt_subscribe(module_inst, FL0_TOPIC, QOS);
+			//status = mqtt_subscribe(module_inst, FL1_TOPIC, QOS);
 			/* Enable USART receiving callback. */
 			usart_enable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
 			printf("Subscriptions completed.\r\n");
@@ -259,6 +259,15 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_RECV_PUBLISH:
 		/* You received publish message which you had subscribed. */
 		if (data->recv_publish.topic != NULL && data->recv_publish.msg != NULL) {
+			printf("MQTT_CALLBACK_RECV_PUBLISH: ");
+			for (int i = 0; i < data->recv_publish.topic_size; i++) {
+				printf("%c", data->recv_publish.topic[i]);
+			}
+			printf(" >> ");
+			for (int i = 0; i < data->recv_publish.msg_size; i++) {
+				printf("%c", data->recv_publish.msg[i]);
+			}
+			printf("\r\n");
 			if (!strncmp(data->recv_publish.topic, MAIN_CHAT_TOPIC, strlen(MAIN_CHAT_TOPIC))) {
 				/* Print user name and message */
 				for (int i = strlen(MAIN_CHAT_TOPIC); i < data->recv_publish.topic_size; i++) {
@@ -793,6 +802,8 @@ int main(void)
 	tstrWifiInitParam param;
 	int8_t ret;
 	char topic[strlen(MAIN_CHAT_TOPIC) + MAIN_CHAT_USER_NAME_SIZE + 1];
+	int lastSenseFL0 = 0;
+	int lastSenseFL1 = 0;
 	system_init();
 	configure_console();
 	configure_timer();
@@ -851,15 +862,32 @@ int main(void)
 		else {
 			port_pin_set_output_level(LED_1_PIN, true);
 		}
+		
+		int sensedFL0 = !port_pin_get_input_level(FL0);
+		int sensedFL1 = !port_pin_get_input_level(FL1);
+		if (sensedFL0 != lastSenseFL0) {
+			sprintf(pub_text, "%d", sensedFL0);
+			printf("Sensed FL0: %d\r\n", sensedFL0);
+			mqtt_publish(&mqtt_inst, FL0_TOPIC, pub_text, 8, QOS, 1);
+			lastSenseFL0 = sensedFL0;
+		}
+		if (sensedFL1 != lastSenseFL1) {
+			sprintf(pub_text, "%d", sensedFL1);
+			printf("Sensed FL1: %d\r\n", sensedFL1);
+			mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
+			lastSenseFL1 = sensedFL1;
+		}	
+		delay_ms(300);
 		if (port_pin_get_input_level(B1) == false) {
+			/*
 			if (port_pin_get_output_level(RELAY)) {
 				port_pin_set_output_level(RELAY, false);
 			}
 			else {
 				port_pin_set_output_level(RELAY, true);
 			}
-			delay_ms(300);
-			/*
+			delay_ms(300);*/
+			
 			int sensedFL0 = !port_pin_get_input_level(FL0);
 			int sensedFL1 = !port_pin_get_input_level(FL1);
 			sprintf(pub_text, "%d", sensedFL0);
@@ -868,7 +896,7 @@ int main(void)
 			sprintf(pub_text, "%d", sensedFL1);
 			printf("Sensed FL1: %d\r\n", sensedFL1);
 			mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
-			delay_ms(300);*/
+			delay_ms(300);
 			//write_firmware = true;
 		}
 		
