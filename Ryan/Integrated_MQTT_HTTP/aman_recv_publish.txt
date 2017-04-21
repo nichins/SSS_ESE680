@@ -1,0 +1,44 @@
+case MQTT_CALLBACK_RECV_PUBLISH:
+		/* You received publish message which you had subscribed. */
+		if (data->recv_publish.topic != NULL && data->recv_publish.msg != NULL) {
+      
+      
+      /// Main Topic
+			if (!strncmp(data->recv_publish.topic, MAIN_CHAT_TOPIC, strlen(MAIN_CHAT_TOPIC)) ) {
+        /* Print Topic */
+        printf("%s >> ", MAIN_CHAT_TOPIC);
+        
+        /* Print message */
+        for (int i = 0; i < data->recv_publish.msg_size; i++) {
+          printf("%c", data->recv_publish.msg[i]);
+        }
+        printf("\r\n");
+			}
+      
+      /// Sensor Topic
+      if (!strncmp(data->recv_publish.topic, SENSOR_TOPIC, strlen(SENSOR_TOPIC)) ) {
+        /* Print Topic */
+        printf("%s >> ", SENSOR_TOPIC);
+        
+        /* Print message */
+        for (int i = 0; i < data->recv_publish.msg_size; i++) {
+          printf("%c", data->recv_publish.msg[i]);
+        }
+        printf("\r\n");
+      }
+      
+      /// Actuator Topic
+      if (!strncmp(data->recv_publish.topic, ACTUATOR_TOPIC, strlen(ACTUATOR_TOPIC)) ) {
+        /* Print Topic */
+        printf("%s >> ", ACTUATOR_TOPIC);
+       port_pin_toggle_output_level(LED_0_PIN);
+        /* Print message */
+        for (int i = 0; i < data->recv_publish.msg_size; i++) {
+          printf("%c", data->recv_publish.msg[i]);
+        }
+        printf("\r\n");
+      }
+      
+		}
+
+		break;
