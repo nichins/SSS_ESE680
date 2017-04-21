@@ -23,7 +23,7 @@ bool firstCRC = true;	// Flag for first CRC calc
 bool download_CRC = false; //Are we downloading CRC?
 uint32_t dlCRC;			// Downloaded CRC
 
-#define FIRMWARE_VERSION			 0x02
+#define FIRMWARE_VERSION			 0x01
 #define LED_0_PIN					 PIN_PA23
 #define B1							 PIN_PB23
 #define FW_STAT_ADDRESS			     0x7F00
@@ -235,6 +235,8 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 			printf("Past actuator sub\r\n");
 			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, 2);
 			printf("Past upgrade sub\r\n");
+			status = mqtt_subscribe(module_inst, SENSE_TOPIC, 2);
+			printf("Past sense sub\r\n");
 			/* Enable USART receiving callback. */
 			usart_enable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
 			printf("Preparation of the chat has been completed.\r\n");
@@ -279,6 +281,13 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 				/* Print Topic */
 				printf("Upgrade requested\r\n");
 				write_firmware = true;
+			}
+			if (!strncmp(data->recv_publish.topic, SENSE_TOPIC, strlen(SENSE_TOPIC)) ) {
+				/* Print Topic */
+				int sensed = rand();
+				sprintf(pub_text, "%d", sensed);
+				printf("Sensor requested: Sensed %d\r\n", sensed);
+				mqtt_publish(&mqtt_inst, SENSOR_TOPIC, pub_text, 8, 1, 1);
 			}
 		}
 

@@ -412,9 +412,9 @@ src/iot/stream_writer.d \
 src/iot/sw_timer.d \
 src/main21.d
 
-OUTPUT_FILE_PATH +=WINC1500_MQTT_CHAT_EXAMPLE1.elf
+OUTPUT_FILE_PATH +=Application.elf
 
-OUTPUT_FILE_PATH_AS_ARGS +=WINC1500_MQTT_CHAT_EXAMPLE1.elf
+OUTPUT_FILE_PATH_AS_ARGS +=Application.elf
 
 ADDITIONAL_DEPENDENCIES:=
 
@@ -761,14 +761,14 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: ARM/GNU Linker : 5.3.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map="WINC1500_MQTT_CHAT_EXAMPLE1.map" --specs=nano.specs -Wl,--start-group -larm_cortexM0l_math -lMQTT -lm  -Wl,--end-group -L"../src/iot/mqtt" -L"../src/ASF/thirdparty/CMSIS/Lib/GCC"  -Wl,--gc-sections -mcpu=cortex-m0plus -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/samd21/gcc/samd21g18a_flash.ld -Wl,--section-start=.text=0x8000  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map="Application.map" --specs=nano.specs -Wl,--start-group -larm_cortexM0l_math -lMQTT -lm  -Wl,--end-group -L"../src/iot/mqtt" -L"../src/ASF/thirdparty/CMSIS/Lib/GCC"  -Wl,--gc-sections -mcpu=cortex-m0plus -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/samd21/gcc/samd21g18a_flash.ld -Wl,--section-start=.text=0x8000  
 	@echo Finished building target: $@
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O binary "WINC1500_MQTT_CHAT_EXAMPLE1.elf" "WINC1500_MQTT_CHAT_EXAMPLE1.bin"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature  "WINC1500_MQTT_CHAT_EXAMPLE1.elf" "WINC1500_MQTT_CHAT_EXAMPLE1.hex"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -j .eeprom --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0 --no-change-warnings -O binary "WINC1500_MQTT_CHAT_EXAMPLE1.elf" "WINC1500_MQTT_CHAT_EXAMPLE1.eep" || exit 0
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objdump.exe" -h -S "WINC1500_MQTT_CHAT_EXAMPLE1.elf" > "WINC1500_MQTT_CHAT_EXAMPLE1.lss"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature  "WINC1500_MQTT_CHAT_EXAMPLE1.elf" "WINC1500_MQTT_CHAT_EXAMPLE1.srec"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-size.exe" "WINC1500_MQTT_CHAT_EXAMPLE1.elf"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O binary "Application.elf" "Application.bin"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature  "Application.elf" "Application.hex"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -j .eeprom --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0 --no-change-warnings -O binary "Application.elf" "Application.eep" || exit 0
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objdump.exe" -h -S "Application.elf" > "Application.lss"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature  "Application.elf" "Application.srec"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-size.exe" "Application.elf"
 	
 	
 
@@ -780,5 +780,5 @@ $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER
 clean:
 	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
 	-$(RM) $(C_DEPS_AS_ARGS)   
-	rm -rf "WINC1500_MQTT_CHAT_EXAMPLE1.elf" "WINC1500_MQTT_CHAT_EXAMPLE1.a" "WINC1500_MQTT_CHAT_EXAMPLE1.hex" "WINC1500_MQTT_CHAT_EXAMPLE1.bin" "WINC1500_MQTT_CHAT_EXAMPLE1.lss" "WINC1500_MQTT_CHAT_EXAMPLE1.eep" "WINC1500_MQTT_CHAT_EXAMPLE1.map" "WINC1500_MQTT_CHAT_EXAMPLE1.srec"
+	rm -rf "Application.elf" "Application.a" "Application.hex" "Application.bin" "Application.lss" "Application.eep" "Application.map" "Application.srec"
 	
