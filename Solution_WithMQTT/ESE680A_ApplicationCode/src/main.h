@@ -35,9 +35,9 @@ extern "C" {
 static const char main_mqtt_broker[] = "m13.cloudmqtt.com";
 
 /** Wi-Fi AP Settings. */
-#define MAIN_WLAN_SSID                       "FBISURVEILLANCEVAN085"//"Comcast-xlab-2.4" /**< Destination SSID */
+#define MAIN_WLAN_SSID                       "Comcast-xlab-2.4" /**< Destination SSID */
 #define MAIN_WLAN_AUTH                       M2M_WIFI_SEC_WPA_PSK /**< Security manner */
-#define MAIN_WLAN_PSK                        "cakeboss"//"comcast123!" /**< Password for Destination SSID */
+#define MAIN_WLAN_PSK                        "comcast123!" /**< Password for Destination SSID */
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
