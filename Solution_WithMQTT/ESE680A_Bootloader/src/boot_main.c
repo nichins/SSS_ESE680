@@ -42,15 +42,16 @@ struct usart_module usart_instance;
 extern unsigned char params[];
 
 // usart stuff
-#define EDBG_CDC_MODULE              SERCOM4
-#define EDBG_CDC_SERCOM_MUX_SETTING  USART_RX_3_TX_2_XCK_3
-#define EDBG_CDC_SERCOM_PINMUX_PAD0  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_PINMUX_PAD1  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_PINMUX_PAD2  PINMUX_PB10D_SERCOM4_PAD2
-#define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PB11D_SERCOM4_PAD3
+#define EDBG_CDC_MODULE               SERCOM3
+#define EDBG_CDC_CLOCK                GCLK_GENERATOR_0
+#define EDBG_CDC_SERCOM_MUX_SETTING   USART_RX_1_TX_2_XCK_3
+#define EDBG_CDC_SERCOM_PINMUX_PAD0   PINMUX_UNUSED
+#define EDBG_CDC_SERCOM_PINMUX_PAD1   PINMUX_PA17D_SERCOM3_PAD1
+#define EDBG_CDC_SERCOM_PINMUX_PAD2   PINMUX_PA20D_SERCOM3_PAD2
+#define EDBG_CDC_SERCOM_PINMUX_PAD3   PINMUX_UNUSED
 #define APP_START_ADDRESS			 0x8000
 #define FW_STAT_ADDRESS			     0x7F00
-#define BOOT_PIN					PIN_PB23 //pin tied to button for stay in boot mode
+#define BOOT_PIN					 PIN_PB03 //pin tied to button for stay in boot mode
 // spi flash stuff
 #define AT25DFX_BUFFER_SIZE				NVMCTRL_PAGE_SIZE
 #define AT25DFX_CLOCK_SPEED				120000
@@ -280,12 +281,12 @@ int main (void)
 	//check if button is pressed to lock in boot
 	while(n++ < 1000)
 	{
-		/*if(!port_pin_get_input_level(BOOT_PIN)) // KILLED THIS SO WE CAN USE THE BUTTON IN APP TESTING FOR NOW ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if(!port_pin_get_input_level(BOOT_PIN)) 
 		{
 			remain_in_boot = 1;
 			init_drivers();
 			break;
-		}*/
+		}
 	}
 	while(1) 
 	{
@@ -315,7 +316,7 @@ int main (void)
 			if (system_get_reset_cause() == SYSTEM_RESET_CAUSE_WDT) {
 				thisFW.reset_count += 1;
 				writeFWStat(thisFW);
-				if (thisFW.reset_count > 10) {
+				if (thisFW.reset_count > 5) {
 					thisFW.reset_count = 0;
 					init_drivers();
 					thisFW.downloaded_image = 0;
@@ -326,7 +327,7 @@ int main (void)
 			app_code_entry();
 		}
 		
-		printf("in boot\n\r");
+		printf("in boot\r\n");
 		delay_ms(500);
 	}
 }

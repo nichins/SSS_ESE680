@@ -46,25 +46,27 @@ typedef struct
 	uint8_t reset_count;		// Reset counter for app recovery
 }Firmware_Status_t;
 
+bool reply_firmware_ver = false;
 bool write_firmware=false;
-crc32_t crcChecker;		// CRC object for calculating CRC
-bool firstCRC = true;	// Flag for first CRC calc
-bool download_CRC = false; //Are we downloading CRC?
-uint32_t dlCRC;			// Downloaded CRC
+crc32_t crcChecker;				// CRC object for calculating CRC
+bool firstCRC = true;			// Flag for first CRC calc
+bool download_CRC = false;		//Are we downloading CRC?
+uint32_t dlCRC;					// Downloaded CRC
 
 struct usart_module usart_instance;
 
-#define FIRMWARE_VERSION			 0x01
-#define LED_0_PIN					 PIN_PA23
-#define B1							 PIN_PB23
+#define FIRMWARE_VERSION			 "1.0.0"
+#define LED_0_PIN					 PIN_PA11
+#define B1							 PIN_PB03
 #define FW_STAT_ADDRESS			     0x7F00
 // usart stuff
-#define EDBG_CDC_MODULE              SERCOM4
-#define EDBG_CDC_SERCOM_MUX_SETTING  USART_RX_3_TX_2_XCK_3
-#define EDBG_CDC_SERCOM_PINMUX_PAD0  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_PINMUX_PAD1  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_PINMUX_PAD2  PINMUX_PB10D_SERCOM4_PAD2
-#define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PB11D_SERCOM4_PAD3
+#define EDBG_CDC_MODULE               SERCOM3
+#define EDBG_CDC_CLOCK                GCLK_GENERATOR_0
+#define EDBG_CDC_SERCOM_MUX_SETTING   USART_RX_1_TX_2_XCK_3
+#define EDBG_CDC_SERCOM_PINMUX_PAD0   PINMUX_UNUSED
+#define EDBG_CDC_SERCOM_PINMUX_PAD1   PINMUX_PA17D_SERCOM3_PAD1
+#define EDBG_CDC_SERCOM_PINMUX_PAD2   PINMUX_PA20D_SERCOM3_PAD2
+#define EDBG_CDC_SERCOM_PINMUX_PAD3   PINMUX_UNUSED
 // spi flash stufff
 #define AT25DFX_BUFFER_SIZE  (256)
 #define AT25DFX_CLOCK_SPEED				120000
@@ -110,8 +112,6 @@ static struct mqtt_module mqtt_inst;
 /* Receive buffer of the MQTT service. */
 static char mqtt_buffer[MAIN_MQTT_BUFFER_SIZE];
 
-/** UART buffer. */
-static char uart_buffer[MAIN_CHAT_BUFFER_SIZE];
 
 /** Written size of UART buffer. */
 static int uart_buffer_written = 0;
@@ -122,18 +122,6 @@ static uint16_t uart_ch_buffer;
 volatile int status;
 uint8_t buttonLevel = 1;
 
-/**
- * \brief Callback of USART input.
- *
- * \param[in] module USART module structure.
- */
-static void uart_callback(const struct usart_module *const module)
-{
-	/* If input string is bigger than buffer size limit, ignore the excess part. */
-	if (uart_buffer_written < MAIN_CHAT_BUFFER_SIZE) {
-		uart_buffer[uart_buffer_written++] = uart_ch_buffer & 0xFF;
-	}
-}
 
 static void wifi_callback(uint8 msg_type, void *msg_data)
 {
@@ -228,7 +216,7 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 		 */
 		if (data->sock_connected.result >= 0) {
 			//mqtt_connect_broker(module_inst, 1, NULL, NULL, mqtt_user, NULL, NULL, 0, 0, 0);
-      status = mqtt_connect_broker(module_inst, 1, mqtt_user, mqtt_pass, mqtt_user, NULL, NULL, 0, 0, 0);
+      status = mqtt_connect_broker(module_inst, 1, mqtt_user, mqtt_pass, mqtt_user, NULL, NULL, 0, 2, 0);
 		} else {
 			printf("Connect fail to server(%s)! retry it automatically.\r\n", main_mqtt_broker);
 			mqtt_connect(module_inst, main_mqtt_broker); /* Retry that. */
@@ -239,10 +227,9 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_CONNECTED:
 		if (data->connected.result == MQTT_CONN_RESULT_ACCEPT) {
 			/* Subscribe chat topic. */
-      delay_ms(1000);
-			status = mqtt_subscribe(module_inst, MAIN_CHAT_TOPIC, 1);
-      status = mqtt_subscribe(module_inst, SENSOR_TOPIC, 1);
-      status = mqtt_subscribe(module_inst, ACTUATOR_TOPIC, 1);
+			status = mqtt_subscribe(module_inst, ACTUATOR_TOPIC, 2);
+			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, 2);
+			status = mqtt_subscribe(module_inst, VERSION_TOPIC, 2);
 			/* Enable USART receiving callback. */
 			usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
 			printf("Preparation of the chat has been completed.\r\n");
@@ -256,44 +243,55 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_RECV_PUBLISH:
 		/* You received publish message which you had subscribed. */
 		if (data->recv_publish.topic != NULL && data->recv_publish.msg != NULL) {
-      
-      
-      /// Main Topic
-			if (!strncmp(data->recv_publish.topic, MAIN_CHAT_TOPIC, strlen(MAIN_CHAT_TOPIC)) ) {
-        /* Print Topic */
-        printf("%s >> ", MAIN_CHAT_TOPIC);
-        
-        /* Print message */
-        for (int i = 0; i < data->recv_publish.msg_size; i++) {
-          printf("%c", data->recv_publish.msg[i]);
-        }
-        printf("\r\n");
-			}
-      
-      /// Sensor Topic
-      if (!strncmp(data->recv_publish.topic, SENSOR_TOPIC, strlen(SENSOR_TOPIC)) ) {
-        /* Print Topic */
-        printf("%s >> ", SENSOR_TOPIC);
-        
-        /* Print message */
-        for (int i = 0; i < data->recv_publish.msg_size; i++) {
-          printf("%c", data->recv_publish.msg[i]);
-        }
-        printf("\r\n");
-      }
+    
       
       /// Actuator Topic
       if (!strncmp(data->recv_publish.topic, ACTUATOR_TOPIC, strlen(ACTUATOR_TOPIC)) ) {
         /* Print Topic */
         printf("%s >> ", ACTUATOR_TOPIC);
-       port_pin_toggle_output_level(LED_0_PIN);
+		if(!strncmp(data->recv_publish.msg,"true", data->recv_publish.msg_size)){
+			 port_pin_set_output_level(LED_0_PIN,true);
+		}
+		else{
+			 port_pin_set_output_level(LED_0_PIN,false);
+		}
+		
+      
         /* Print message */
         for (int i = 0; i < data->recv_publish.msg_size; i++) {
           printf("%c", data->recv_publish.msg[i]);
         }
         printf("\r\n");
       }
-      
+       /// Upgrade Topic
+       if (!strncmp(data->recv_publish.topic, UPGRADE_TOPIC, strlen(UPGRADE_TOPIC)) ) {
+	       /* Print Topic */
+	       printf("%s >> ", UPGRADE_TOPIC);
+	       /* Print message */
+	       for (int i = 0; i < data->recv_publish.msg_size; i++) {
+		       printf("%c", data->recv_publish.msg[i]);
+	       }
+	       printf("\r\n");
+		   
+		   if(!strncmp(data->recv_publish.msg,"upgrade firmware", data->recv_publish.msg_size)){
+			   write_firmware=true;
+		   }
+       }
+	   
+	   /// Version Topic
+	   if (!strncmp(data->recv_publish.topic, VERSION_TOPIC, strlen(VERSION_TOPIC)) ) {
+		   /* Print Topic */
+		   printf("%s >> ", VERSION_TOPIC);
+		   /* Print message */
+		   for (int i = 0; i < data->recv_publish.msg_size; i++) {
+			   printf("%c", data->recv_publish.msg[i]);
+		   }
+		   printf("\r\n");
+		   
+		   if(!strncmp(data->recv_publish.msg,"reply", data->recv_publish.msg_size)){
+			   reply_firmware_ver=true;
+		   }
+	   }
 		}
 
 		break;
@@ -319,7 +317,7 @@ static void configure_mqtt(void)
 	mqtt_conf.timer_inst = &swt_module_inst_mqtt;
 	mqtt_conf.recv_buffer = mqtt_buffer;
 	mqtt_conf.recv_buffer_size = MAIN_MQTT_BUFFER_SIZE;
-  mqtt_conf.port = MQTT_PORT;
+    mqtt_conf.port = MQTT_PORT;
 
 	result = mqtt_init(&mqtt_inst, &mqtt_conf);
 	if (result < 0) {
@@ -333,39 +331,6 @@ static void configure_mqtt(void)
 	if (result < 0) {
 		printf("MQTT register callback failed. Error code is (%d)\r\n", result);
 		while (1) {
-		}
-	}
-}
-
-/**
- * \brief Checking the USART buffer.
- *
- * Finding the new line character(\n or \r\n) in the USART buffer.
- * If buffer was overflowed, Sending the buffer.
- */
-static void check_usart_buffer(char *topic)
-{
-	int i;
-
-	/* Publish the input string when newline was received or input string is bigger than buffer size limit. */
-	if (uart_buffer_written >= MAIN_CHAT_BUFFER_SIZE) {
-		mqtt_publish(&mqtt_inst, topic, uart_buffer, MAIN_CHAT_BUFFER_SIZE, 0, 0);
-		uart_buffer_written = 0;
-	} else {
-		for (i = 0; i < uart_buffer_written; i++) {
-			/* Find newline character ('\n' or '\r\n') and publish the previous string . */
-			if (uart_buffer[i] == '\n') {
-				mqtt_publish(&mqtt_inst, topic, uart_buffer, (i > 0 && uart_buffer[i - 1] == '\r') ? i - 1 : i, 0, 0);
-				/* Move remain data to start of the buffer. */
-				if (uart_buffer_written > i + 1) {
-					memmove(uart_buffer, uart_buffer + i + 1, uart_buffer_written - i - 1);
-					uart_buffer_written = uart_buffer_written - i - 1;
-				} else {
-					uart_buffer_written = 0;
-				}
-
-				break;
-			}
 		}
 	}
 }
@@ -384,7 +349,6 @@ static void configure_console(void)
 	usart_conf.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
 	usart_conf.baudrate    = 115200;
 	stdio_serial_init(&usart_instance, EDBG_CDC_MODULE, &usart_conf);
-	usart_register_callback(&usart_instance, (usart_callback_t)uart_callback, USART_CALLBACK_BUFFER_RECEIVED);
 	usart_enable(&usart_instance);
 }
 
@@ -851,20 +815,22 @@ int main (void)
 		/* Checks the timer timeout. */
 		sw_timer_task(&swt_module_inst_mqtt);
 		
+		// push button levels
 		if( port_pin_get_input_level(B1) != buttonLevel )
 		{
 			//int mqtt_publish(struct mqtt_module *const module, const char *topic, const char *msg, uint32_t msg_len, uint8_t qos, uint8_t retain);
 			buttonLevel = port_pin_get_input_level(B1);
-			printf("Button pushed\r\n");
 			sprintf(pub_text, "%d", buttonLevel);
-			printf("Made it to other side of sprintf\r\n");
-			mqtt_publish(&mqtt_inst, SENSOR_TOPIC, pub_text, 1, 0, 0);
-			printf("Made it to other side of publish\r\n");
-			delay_ms(300);
+			mqtt_publish(&mqtt_inst, SENSOR_TOPIC, pub_text, 1, 2, 0);
 		}
-		/* Checks the USART buffer. */
-		check_usart_buffer(MAIN_CHAT_TOPIC);
-		
+
+		// reply with version number
+		if(reply_firmware_ver)
+		{
+			sprintf(pub_text, "%s", FIRMWARE_VERSION);
+			mqtt_publish(&mqtt_inst, VERSIONREADOUT_TOPIC, pub_text, strlen(FIRMWARE_VERSION), 2, 0);
+			reply_firmware_ver=false;
+		}
 		if (write_firmware) {
 			socketDeinit();
 			mqtt_deinit(&mqtt_inst);
@@ -887,7 +853,6 @@ int main (void)
 				while (1) {
 				}
 			}
-			
 			socketInit();
 			registerSocketCallback(socket_cb, resolve_cb);
 			printf("Survived http client setup\r\n");
@@ -916,48 +881,4 @@ int main (void)
 			system_reset();
 		}
 	}
-	
-	/*
-	while (1) 
-	{
-		if (port_pin_get_input_level(B1) == true) {
-			port_pin_set_output_level(LED_0_PIN, false);
-		}
-		else 
-		{
-			port_pin_set_output_level(LED_0_PIN, true);
-			write_firmware = true;
-		}
-		
-		// receive command from IBM BlueMix
-		//....................
-		//write the updated status
-		if(write_firmware)
-		{
-			// download firmware into serial flash and upgrade
-			Firmware_Status_t fw_status = getFWStat();
-			if (fw_status.executing_image == 1) {
-				fw_status.downloaded_image = 2;
-			}
-			else {
-				fw_status.downloaded_image = 1;
-			}
-			printf("Executing image: %d, DL to: %d\r\n", fw_status.executing_image, fw_status.downloaded_image);
-			firstCRC=true;
-			download_firmware(fw_status.downloaded_image);
-			printf("\n\rMain: Done downloading firmware and CRC\n\r");
-			
-			if (dlCRC == crcChecker){
-				printf("\n\rMain: CRC MATCHED!\n\r");
-				*(uint32_t*)fw_status.signature = (uint32_t)crcChecker; //replace with checksum of downloaded image
-				fw_status.writenew_image = 1;  // write image flag
-				writeFWStat(fw_status);
-			} else {
-				printf("\n\r Main: CRC Check Fail!\n\r");
-			}
-			
-			// reset to begin writing firmware
-			system_reset();
-		}
-	}	*/
 }

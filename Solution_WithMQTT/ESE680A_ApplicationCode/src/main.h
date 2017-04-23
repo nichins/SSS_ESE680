@@ -26,7 +26,9 @@ extern "C" {
 #define MAIN_CHAT_TOPIC "chat"
 #define SENSOR_TOPIC    "sensor"
 #define ACTUATOR_TOPIC  "actuator"
-
+#define VERSION_TOPIC	"version"
+#define VERSIONREADOUT_TOPIC "versionreadout"
+#define UPGRADE_TOPIC	"upgrade"
 #define MQTT_PORT       18312
 /*
  * A MQTT broker server which was connected.
@@ -35,9 +37,9 @@ extern "C" {
 static const char main_mqtt_broker[] = "m13.cloudmqtt.com";
 
 /** Wi-Fi AP Settings. */
-#define MAIN_WLAN_SSID                       "Comcast-xlab-2.4" /**< Destination SSID */
+#define MAIN_WLAN_SSID                       "hp-setup-1" /**< Destination SSID */
 #define MAIN_WLAN_AUTH                       M2M_WIFI_SEC_WPA_PSK /**< Security manner */
-#define MAIN_WLAN_PSK                        "comcast123!" /**< Password for Destination SSID */
+#define MAIN_WLAN_PSK                        "WelcomeHal" /**< Password for Destination SSID */
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
