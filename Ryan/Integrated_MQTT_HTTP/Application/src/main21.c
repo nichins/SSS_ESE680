@@ -22,6 +22,7 @@ crc32_t crcChecker;		// CRC object for calculating CRC
 bool firstCRC = true;	// Flag for first CRC calc
 bool download_CRC = false; //Are we downloading CRC?
 uint32_t dlCRC;			// Downloaded CRC
+bool drain = false;		// Flag for actively draining vessel
 
 #define FIRMWARE_VERSION			0x01
 #define LED_0_PIN					PIN_PB10
@@ -798,11 +799,11 @@ static void download_firmware(unsigned int slot)
 	
 	download_CRC = false;
 }
+
 int main(void)
 {
 	tstrWifiInitParam param;
 	int8_t ret;
-	char topic[strlen(MAIN_CHAT_TOPIC) + MAIN_CHAT_USER_NAME_SIZE + 1];
 	int lastSenseFL0 = 0;
 	int lastSenseFL1 = 0;
 	system_init();
@@ -815,12 +816,10 @@ int main(void)
 	configure_spi_flash();
 	configure_port_pins();
 	
-	printf("I am firmware version %d\r\n", FIRMWARE_VERSION);
 	
+	printf("I am firmware version %d\r\n", FIRMWARE_VERSION);
 	printf("User : %s\r\n", mqtt_user);
 	printf("Password : %s\r\n", mqtt_pass);
-	sprintf(topic, "%s", MAIN_CHAT_TOPIC);
-	printf("Topic : %s\r\n", topic);
 	
 	/* Initialize Wi-Fi parameters structure. */
 	memset((uint8_t *)&param, 0, sizeof(tstrWifiInitParam));
@@ -850,7 +849,32 @@ int main(void)
 		/* Checks the timer timeout. */
 		sw_timer_task(&swt_module_inst);
 		/* Checks the USART buffer. */
-		check_usart_buffer(topic);
+		//check_usart_buffer(topic);
+		int sensedFL0 = !port_pin_get_input_level(FL0);
+		int sensedFL1 = !port_pin_get_input_level(FL1);
+		
+		if (sensedFL1 && sensedFL0) {
+			drain = true;
+			port_pin_set_output_level(RELAY, true);
+		}
+		if (sensedFL0) {
+			port_pin_set_output_level(LED_0_PIN, true);
+		}
+		else {
+			port_pin_set_output_level(LED_0_PIN, false);
+			if (drain) {
+				drain = false;
+				port_pin_set_output_level(RELAY, false);
+			}
+		}
+		if (sensedFL1) {
+			port_pin_set_output_level(LED_1_PIN, true);
+		}
+		else {
+			port_pin_set_output_level(LED_1_PIN, false);
+		}
+
+/*
 		if (port_pin_get_input_level(FL0)) {
 			port_pin_set_output_level(LED_0_PIN, false);
 		}
@@ -863,9 +887,8 @@ int main(void)
 		else {
 			port_pin_set_output_level(LED_1_PIN, true);
 		}
+		*/
 		
-		int sensedFL0 = !port_pin_get_input_level(FL0);
-		int sensedFL1 = !port_pin_get_input_level(FL1);
 		if (sensedFL0 != lastSenseFL0) {
 			sprintf(pub_text, "%d", sensedFL0);
 			printf("Sensed FL0: %d\r\n", sensedFL0);
@@ -878,7 +901,7 @@ int main(void)
 			mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
 			lastSenseFL1 = sensedFL1;
 		}	
-		delay_ms(300);
+		delay_ms(50);
 		if (port_pin_get_input_level(B1) == false) {
 			/*
 			if (port_pin_get_output_level(RELAY)) {
