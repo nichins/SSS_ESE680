@@ -31,7 +31,7 @@ uint32_t dlCRC;			// Downloaded CRC
 #define FL0							PIN_PB22
 #define FL1							PIN_PB23
 #define FW_STAT_ADDRESS			    0x7F00
-#define QOS							0
+#define QOS							2
 
 #define EDBG_CDC_MODULE              SERCOM3
 #define EDBG_CDC_SERCOM_MUX_SETTING  USART_RX_3_TX_0_XCK_1
@@ -259,6 +259,7 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_RECV_PUBLISH:
 		/* You received publish message which you had subscribed. */
 		if (data->recv_publish.topic != NULL && data->recv_publish.msg != NULL) {
+			/*
 			printf("MQTT_CALLBACK_RECV_PUBLISH: ");
 			for (int i = 0; i < data->recv_publish.topic_size; i++) {
 				printf("%c", data->recv_publish.topic[i]);
@@ -267,7 +268,7 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 			for (int i = 0; i < data->recv_publish.msg_size; i++) {
 				printf("%c", data->recv_publish.msg[i]);
 			}
-			printf("\r\n");
+			printf("\r\n");*/
 			if (!strncmp(data->recv_publish.topic, MAIN_CHAT_TOPIC, strlen(MAIN_CHAT_TOPIC))) {
 				/* Print user name and message */
 				for (int i = strlen(MAIN_CHAT_TOPIC); i < data->recv_publish.topic_size; i++) {
@@ -896,7 +897,7 @@ int main(void)
 			sprintf(pub_text, "%d", sensedFL1);
 			printf("Sensed FL1: %d\r\n", sensedFL1);
 			mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
-			delay_ms(300);
+			delay_ms(50);
 			//write_firmware = true;
 		}
 		
