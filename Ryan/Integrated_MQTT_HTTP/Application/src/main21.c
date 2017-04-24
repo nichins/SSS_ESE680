@@ -24,7 +24,7 @@ bool download_CRC = false; //Are we downloading CRC?
 uint32_t dlCRC;			// Downloaded CRC
 bool drain = false;		// Flag for actively draining vessel
 
-#define FIRMWARE_VERSION			0x01
+#define FIRMWARE_VERSION			"0x01"
 #define LED_0_PIN					PIN_PB10
 #define LED_1_PIN					PIN_PB11
 #define RELAY						PIN_PA05
@@ -240,11 +240,13 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 		if (data->connected.result == MQTT_CONN_RESULT_ACCEPT) {
 			/* Subscribe chat topic. */
 			printf("Trying to sub...\r\n");
-			status = mqtt_subscribe(module_inst, MAIN_CHAT_TOPIC, QOS);
+			//status = mqtt_subscribe(module_inst, MAIN_CHAT_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, ACTUATOR_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL0_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL1_TOPIC, QOS);
+			//status = mqtt_subscribe(module_inst, PING_RECV_TOPIC, QOS);
+			status = mqtt_subscribe(module_inst, VER_RECV_TOPIC, QOS);
 			//status = mqtt_subscribe(module_inst, FL0_TOPIC, QOS);
 			//status = mqtt_subscribe(module_inst, FL1_TOPIC, QOS);
 			/* Enable USART receiving callback. */
@@ -315,6 +317,16 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 				sprintf(pub_text, "%d", sensed);
 				printf("Sensor FL1 requested: Sensed %d\r\n", sensed);
 				mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
+			}
+			if (!strncmp(data->recv_publish.topic, VER_RECV_TOPIC, strlen(VER_RECV_TOPIC)) ) {
+				sprintf(pub_text, "%s", FIRMWARE_VERSION);
+				printf("Version requested: Sent %s\r\n", FIRMWARE_VERSION);
+				mqtt_publish(&mqtt_inst, VER_SEND_TOPIC, FIRMWARE_VERSION, strlen(FIRMWARE_VERSION), QOS, 0);
+			}
+			if (!strncmp(data->recv_publish.topic, PING_RECV_TOPIC, strlen(PING_RECV_TOPIC)) ) {
+				sprintf(pub_text, "%d", 1);
+				printf("Ping requested: Sent %d\r\n", 1);
+				mqtt_publish(&mqtt_inst, PING_SEND_TOPIC, pub_text, 8, QOS, 1);
 			}
 		}
 
