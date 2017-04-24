@@ -10,10 +10,10 @@
 
 typedef struct
 {
-	uint8_t signature[4];
-	uint8_t executing_image;
-	uint8_t downloaded_image;
-	uint8_t writenew_image;
+	uint8_t signature[4];		// Current running app CRC
+	uint8_t executing_image;	// Flash slot of current app
+	uint8_t downloaded_image;	// Flash slot of downloaded firmware
+	uint8_t writenew_image;		// Flag to write downloaded firmware to NVM
 	uint8_t reset_count;		// Reset counter for app recovery
 } Firmware_Status_t;
 
@@ -40,7 +40,7 @@ bool drain = false;		// Flag for actively draining vessel
 #define EDBG_CDC_SERCOM_PINMUX_PAD1  PINMUX_UNUSED
 #define EDBG_CDC_SERCOM_PINMUX_PAD2  PINMUX_PA22C_SERCOM3_PAD0
 #define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_PA21D_SERCOM3_PAD3
-// spi flash stufff
+// spi flash stuff
 #define AT25DFX_BUFFER_SIZE  (256)
 #define AT25DFX_CLOCK_SPEED				120000
 #define AT25DFX_SPI_PINMUX_SETTING		SPI_SIGNAL_MUX_SETTING_E
@@ -68,13 +68,10 @@ static struct usart_module cdc_uart_module;
 /** Instance of Timer module. */
 struct sw_timer_module swt_module_inst;
 
-/** User name of chat. */
-//char mqtt_user[64] = "";
-
-/** User name of chat. */
+/** User name */
 char mqtt_user[] = "ryan";
 
-/** Password of chat. */
+/** Password */
 char mqtt_pass[] = "ryan";
 
 /** Publishing text. */
@@ -102,13 +99,13 @@ volatile int status;
  *
  * \param[in] module USART module structure.
  */
+/*
 static void uart_callback(const struct usart_module *const module)
 {
-	/* If input string is bigger than buffer size limit, ignore the excess part. */
 	if (uart_buffer_written < MAIN_CHAT_BUFFER_SIZE) {
 		uart_buffer[uart_buffer_written++] = uart_ch_buffer & 0xFF;
 	}
-}
+}*/
 
 /**
  * \brief Callback to get the Wi-Fi status update.
@@ -240,15 +237,11 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 		if (data->connected.result == MQTT_CONN_RESULT_ACCEPT) {
 			/* Subscribe chat topic. */
 			printf("Trying to sub...\r\n");
-			//status = mqtt_subscribe(module_inst, MAIN_CHAT_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, ACTUATOR_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, UPGRADE_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL0_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, SENSE_FL1_TOPIC, QOS);
-			//status = mqtt_subscribe(module_inst, PING_RECV_TOPIC, QOS);
 			status = mqtt_subscribe(module_inst, VER_RECV_TOPIC, QOS);
-			//status = mqtt_subscribe(module_inst, FL0_TOPIC, QOS);
-			//status = mqtt_subscribe(module_inst, FL1_TOPIC, QOS);
 			/* Enable USART receiving callback. */
 			usart_enable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
 			printf("Subscriptions completed.\r\n");
@@ -262,27 +255,6 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_RECV_PUBLISH:
 		/* You received publish message which you had subscribed. */
 		if (data->recv_publish.topic != NULL && data->recv_publish.msg != NULL) {
-			/*
-			printf("MQTT_CALLBACK_RECV_PUBLISH: ");
-			for (int i = 0; i < data->recv_publish.topic_size; i++) {
-				printf("%c", data->recv_publish.topic[i]);
-			}
-			printf(" >> ");
-			for (int i = 0; i < data->recv_publish.msg_size; i++) {
-				printf("%c", data->recv_publish.msg[i]);
-			}
-			printf("\r\n");*/
-			if (!strncmp(data->recv_publish.topic, MAIN_CHAT_TOPIC, strlen(MAIN_CHAT_TOPIC))) {
-				/* Print user name and message */
-				for (int i = strlen(MAIN_CHAT_TOPIC); i < data->recv_publish.topic_size; i++) {
-					printf("%c", data->recv_publish.topic[i]);
-				}
-				printf(" >> ");
-				for (int i = 0; i < data->recv_publish.msg_size; i++) {
-					printf("%c", data->recv_publish.msg[i]);
-				}
-				printf("\r\n");
-			}
 			if (!strncmp(data->recv_publish.topic, ACTUATOR_TOPIC, strlen(ACTUATOR_TOPIC)) ) {
 				/* Print Topic */
 				printf("%s >> ", ACTUATOR_TOPIC);
@@ -323,11 +295,6 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 				printf("Version requested: Sent %s\r\n", FIRMWARE_VERSION);
 				mqtt_publish(&mqtt_inst, VER_SEND_TOPIC, FIRMWARE_VERSION, strlen(FIRMWARE_VERSION), QOS, 0);
 			}
-			if (!strncmp(data->recv_publish.topic, PING_RECV_TOPIC, strlen(PING_RECV_TOPIC)) ) {
-				sprintf(pub_text, "%d", 1);
-				printf("Ping requested: Sent %d\r\n", 1);
-				mqtt_publish(&mqtt_inst, PING_SEND_TOPIC, pub_text, 8, QOS, 1);
-			}
 		}
 
 		break;
@@ -335,7 +302,7 @@ static void mqtt_callback(struct mqtt_module *module_inst, int type, union mqtt_
 	case MQTT_CALLBACK_DISCONNECTED:
 		/* Stop timer and USART callback. */
 		printf("MQTT disconnected\r\n");
-		usart_disable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
+		//usart_disable_callback(&cdc_uart_module, USART_CALLBACK_BUFFER_RECEIVED);
 		break;
 	}
 }
@@ -356,8 +323,6 @@ static void configure_console(void)
 	usart_conf.baudrate    = 115200;
 
 	stdio_serial_init(&cdc_uart_module, EDBG_CDC_MODULE, &usart_conf);
-	/* Register USART callback for receiving user input. */
-	usart_register_callback(&cdc_uart_module, (usart_callback_t)uart_callback, USART_CALLBACK_BUFFER_RECEIVED);
 	usart_enable(&cdc_uart_module);
 }
 
@@ -399,39 +364,6 @@ static void configure_mqtt(void)
 	if (result < 0) {
 		printf("MQTT register callback failed. Error code is (%d)\r\n", result);
 		while (1) {
-		}
-	}
-}
-
-/**
- * \brief Checking the USART buffer.
- *
- * Finding the new line character(\n or \r\n) in the USART buffer.
- * If buffer was overflowed, Sending the buffer.
- */
-static void check_usart_buffer(char *topic)
-{
-	int i;
-
-	/* Publish the input string when newline was received or input string is bigger than buffer size limit. */
-	if (uart_buffer_written >= MAIN_CHAT_BUFFER_SIZE) {
-		mqtt_publish(&mqtt_inst, topic, uart_buffer, MAIN_CHAT_BUFFER_SIZE, 0, 0);
-		uart_buffer_written = 0;
-	} else {
-		for (i = 0; i < uart_buffer_written; i++) {
-			/* Find newline character ('\n' or '\r\n') and publish the previous string . */
-			if (uart_buffer[i] == '\n') {
-				mqtt_publish(&mqtt_inst, topic, uart_buffer, (i > 0 && uart_buffer[i - 1] == '\r') ? i - 1 : i, 0, 0);
-				/* Move remain data to start of the buffer. */
-				if (uart_buffer_written > i + 1) {
-					memmove(uart_buffer, uart_buffer + i + 1, uart_buffer_written - i - 1);
-					uart_buffer_written = uart_buffer_written - i - 1;
-				} else {
-					uart_buffer_written = 0;
-				}
-
-				break;
-			}
 		}
 	}
 }
@@ -829,7 +761,7 @@ int main(void)
 	configure_port_pins();
 	
 	
-	printf("I am firmware version %d\r\n", FIRMWARE_VERSION);
+	printf("I am firmware version %s\r\n", FIRMWARE_VERSION);
 	printf("User : %s\r\n", mqtt_user);
 	printf("Password : %s\r\n", mqtt_pass);
 	
@@ -856,12 +788,8 @@ int main(void)
 	while (1) {
 		/* Handle pending events from network controller. */
 		m2m_wifi_handle_events(NULL);
-		/* Try to read user input from USART. */
-		usart_read_job(&cdc_uart_module, &uart_ch_buffer);
 		/* Checks the timer timeout. */
 		sw_timer_task(&swt_module_inst);
-		/* Checks the USART buffer. */
-		//check_usart_buffer(topic);
 		int sensedFL0 = !port_pin_get_input_level(FL0);
 		int sensedFL1 = !port_pin_get_input_level(FL1);
 		
@@ -885,22 +813,6 @@ int main(void)
 		else {
 			port_pin_set_output_level(LED_1_PIN, false);
 		}
-
-/*
-		if (port_pin_get_input_level(FL0)) {
-			port_pin_set_output_level(LED_0_PIN, false);
-		}
-		else {
-			port_pin_set_output_level(LED_0_PIN, true);
-		}
-		if (port_pin_get_input_level(FL1)) {
-			port_pin_set_output_level(LED_1_PIN, false);
-		}
-		else {
-			port_pin_set_output_level(LED_1_PIN, true);
-		}
-		*/
-		
 		if (sensedFL0 != lastSenseFL0) {
 			sprintf(pub_text, "%d", sensedFL0);
 			printf("Sensed FL0: %d\r\n", sensedFL0);
@@ -914,16 +826,7 @@ int main(void)
 			lastSenseFL1 = sensedFL1;
 		}	
 		delay_ms(50);
-		if (port_pin_get_input_level(B1) == false) {
-			/*
-			if (port_pin_get_output_level(RELAY)) {
-				port_pin_set_output_level(RELAY, false);
-			}
-			else {
-				port_pin_set_output_level(RELAY, true);
-			}
-			delay_ms(300);*/
-			
+		if (port_pin_get_input_level(B1) == false) {				// Manual sync of float sensors
 			int sensedFL0 = !port_pin_get_input_level(FL0);
 			int sensedFL1 = !port_pin_get_input_level(FL1);
 			sprintf(pub_text, "%d", sensedFL0);
@@ -933,7 +836,6 @@ int main(void)
 			printf("Sensed FL1: %d\r\n", sensedFL1);
 			mqtt_publish(&mqtt_inst, FL1_TOPIC, pub_text, 8, QOS, 1);
 			delay_ms(50);
-			//write_firmware = true;
 		}
 		
 		if (write_firmware) {
@@ -958,7 +860,7 @@ int main(void)
 			
 			socketInit();
 			registerSocketCallback(socket_cb, resolve_cb);
-			printf("Survived http client setup\r\n");
+			printf("HTTP client setup complete\r\n");
 			/* ~~~~~~~~~~~~~~~~End HTTP client init~~~~~~~~~~~~~~~~~~*/
 			Firmware_Status_t fw_status = getFWStat();
 			if (fw_status.executing_image == 1) {

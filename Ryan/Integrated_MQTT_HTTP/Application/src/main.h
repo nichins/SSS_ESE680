@@ -66,8 +66,6 @@ extern "C" {
 #define SENSE_FL1_TOPIC		"sensefl1"
 #define FL0_TOPIC		"fl0"
 #define FL1_TOPIC		"fl1"
-#define PING_RECV_TOPIC		"pingIn"
-#define PING_SEND_TOPIC		"pingOut"
 #define VER_RECV_TOPIC		"verIn"
 #define VER_SEND_TOPIC		"verOut"
 
@@ -75,14 +73,14 @@ extern "C" {
  * A MQTT broker server which was connected.
  * m2m.eclipse.org is public MQTT broker.
  */
-static const char main_mqtt_broker[] = "96.245.77.135";//"m11.cloudmqtt.com";
+static const char main_mqtt_broker[] = "96.245.77.135";//"96.245.77.135";//"m11.cloudmqtt.com";
 
-#define MQTT_PORT       1883//18861
+#define MQTT_PORT       1883//1883//18861
 
 /** Wi-Fi Settings */
-#define MAIN_WLAN_SSID        "hp-setup-1"//"TroyAndAbedInTheModem" /* < Destination SSID *///"hp-setup-1"//"Comcast-xlab-2.4"//
+#define MAIN_WLAN_SSID        "TroyAndAbedInTheModem"//"TroyAndAbedInTheModem" /* < Destination SSID *///"hp-setup-1"//"Comcast-xlab-2.4"//
 #define MAIN_WLAN_AUTH        M2M_WIFI_SEC_WPA_PSK /* < Security manner */
-#define MAIN_WLAN_PSK         "WelcomeHal"//"cakeboss" /* < Password for Destination SSID *///"WelcomeHal"//"comcast123!"//
+#define MAIN_WLAN_PSK         "cakeboss"//"cakeboss" /* < Password for Destination SSID *///"WelcomeHal"//"comcast123!"//
 
 /** IP address parsing. */
 #define IPV4_BYTE(val, index)                ((val >> (index * 8)) & 0xFF)
