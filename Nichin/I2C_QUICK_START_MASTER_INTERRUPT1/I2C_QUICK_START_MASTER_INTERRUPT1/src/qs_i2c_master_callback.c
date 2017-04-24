@@ -185,9 +185,10 @@ int main(void)
 	rd_packet.data        = rd_buffer;
 	//! [read_packet]
 	printf("setup complete \r\n");
-	/*
-	
-	*/
+	uint32_t t1 =0;
+	uint32_t h1 =0;
+	uint8_t tempC = 0;
+	uint8_t hum = 0;
 	//! [while]
 	while (true)
 	{
@@ -208,6 +209,10 @@ int main(void)
 	
 		rd_packet.data_length = 4;
 		i2c_master_read_packet_job(&i2c_master_instance, &rd_packet);
+		t1 =  ((uint32_t)rd_packet.data[0]<<8 | (uint32_t)rd_packet.data[1]);
+		h1 =  ((uint32_t)rd_packet.data[2]<<8 | (uint32_t)rd_packet.data[3]);
+		tempC = (uint8_t)((t1 * 0xA5)/ 0x10000 )- (uint8_t)0x28;
+		hum = (uint8_t)((h1*0x64)/ 0x10000 );
 		printf("Temp and humidity acquired! \r\n");
 	}
 }

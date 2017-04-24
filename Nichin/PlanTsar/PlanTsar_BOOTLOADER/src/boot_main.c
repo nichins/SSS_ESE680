@@ -241,7 +241,7 @@ static void configure_nvm()
 	config.manual_page_write = false;
 	nvm_set_config(&config);
 }
-
+/*
 static void configure_boot_button()
 {
 	struct port_config pin_conf;
@@ -249,7 +249,7 @@ static void configure_boot_button()
 	pin_conf.direction = PORT_PIN_DIR_INPUT;
 	port_pin_set_config(BOOT_PIN, &pin_conf);
 }
-
+*/
 static void init_drivers()
 {
 	delay_init();
@@ -263,7 +263,7 @@ int main (void)
 {
 	system_init();
 	system_interrupt_enable_global();
-	configure_boot_button();
+	//configure_boot_button();
 	// default boot params. Needed so that linker doesn't optimize it out.
 	uint8_t* t = params; 
 	
@@ -271,7 +271,7 @@ int main (void)
 	uint16_t n=0; 
 	uint8_t remain_in_boot = 0;
 	//check if button is pressed to lock in boot
-	while(n++ < 1000)
+	/*while(n++ < 1000)
 	{
 		if(!port_pin_get_input_level(BOOT_PIN))
 		{
@@ -279,7 +279,7 @@ int main (void)
 			init_drivers();
 			break;
 		}
-	}
+	}*/
 	while(1) 
 	{
 		if(!remain_in_boot)
@@ -287,7 +287,7 @@ int main (void)
 			// check for firmware download requested
 			Firmware_Status_t thisFW = getFWStat();
 			//thisFW.downloaded_image = 0;
-			thisFW.writenew_image = 0;		// Override writenew_image cause we're testing goddamnit
+			//thisFW.writenew_image = 0;		// Override writenew_image cause we're testing goddamnit
 			if(thisFW.writenew_image)
 			{
 				init_drivers();
